@@ -1,0 +1,4 @@
+{ ... }:
+{
+  # Pure configuration for ISO
+}
