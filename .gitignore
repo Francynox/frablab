@@ -1,0 +1,6 @@
+.direnv
+.ruff_cache
+
+result
+result-*
+/nixos-*

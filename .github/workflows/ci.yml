@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+
+jobs:
+  flake-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v16
+        with:
+          name: francynox
+
+      - name: Run flake check
+        run: nix flake check --print-build-logs
+
+  list-hosts:
+    runs-on: ubuntu-latest
+    outputs:
+      hosts: ${{ steps.set-matrix.outputs.hosts }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+      - name: Discover NixOS configurations
+        id: set-matrix
+        run: |
+          HOSTS_JSON=$(nix flake show --json . | jq -c '[.nixosConfigurations | keys[]]')
+          echo "Found hosts: $HOSTS_JSON"
+          echo "hosts=$HOSTS_JSON" >> $GITHUB_OUTPUT
+
+  build-hosts:
+    runs-on: ubuntu-latest
+    needs: [flake-check, list-hosts]
+    if: needs.list-hosts.outputs.hosts != '[]'
+    strategy:
+      fail-fast: false
+      matrix:
+        host: ${{ fromJson(needs.list-hosts.outputs.hosts) }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v16
+        with:
+          name: francynox
+
+      - name: Build ${{ matrix.host }}
+        run: nix build .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel --print-build-logs
