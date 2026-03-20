@@ -49,7 +49,7 @@
     };
 
     nur-francynox = {
-      url = "github:francynox/nur-packages/frablab-progress";
+      url = "github:francynox/nur-packages";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
