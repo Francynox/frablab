@@ -1,9 +1,9 @@
 keys:
   - &nixos-dev age108vz72xskmspg0zhzxvzuwc5ee8stkhhn8jvr260q29tfqnalp2s4cgzc5
-  - &test age1da96ulyadmjhh7hyc2evzvpzva4ql2kdsl9ggfe4vgmyh9ttwe8sm85c58
+  - &bifrost age10fgpd43m8rmucu3ltjf6g7p0rulw2anwt46lhuwkgz60gzr84cuqr67vqa
 creation_rules:
   - path_regex: secrets/[^/]+(\.(yaml|json|env|ini|conf))?$
     key_groups:
       - age:
         - *nixos-dev
-        - *test
+        - *bifrost
