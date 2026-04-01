@@ -29,7 +29,6 @@
 
       config = lib.mkIf cfg.enable {
         networking = {
-          firewall.enable = lib.mkForce true;
           networkmanager.enable = cfg.backend == "networkmanager";
           useNetworkd = cfg.backend == "networkd";
           useDHCP = false;

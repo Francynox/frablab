@@ -14,6 +14,7 @@
         self.nixosModules.base-packages
         self.nixosModules.base-persistence
         self.nixosModules.base-networking
+        self.nixosModules.base-firewall
         self.nixosModules.base-ssh
         self.nixosModules.base-users
         self.nixosModules.base-nix-settings
