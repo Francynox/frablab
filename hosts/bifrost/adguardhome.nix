@@ -33,7 +33,6 @@ in
           mode = "0600";
           inherit (cfg) user;
           inherit (cfg) group;
-          stopAutoUpgrade = false;
           pathToCheck = "${cfg.dataDir}/AdGuardHome.yaml";
         };
       };
