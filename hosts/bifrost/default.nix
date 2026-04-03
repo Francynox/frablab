@@ -5,11 +5,9 @@ in
 {
   networking.hostName = "bifrost";
 
-  services.francynox = {
-    adguardhome = {
-      enable = false;
-    };
-  };
+  imports = [
+    ./adguardhome.nix
+  ];
 
   frablab.base.networking.useDefaultDhcp = false;
   systemd.network = {
@@ -18,8 +16,10 @@ in
       networkConfig = {
         Address = ip.services.bifrost;
         Gateway = ip.services.gateway;
-        DNS = "127.0.0.1";
       };
     };
   };
+
+  networking.resolvconf.useLocalResolver = true;
+  services.resolved.enable = false;
 }
