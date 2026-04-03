@@ -15,8 +15,8 @@ if [ ! -f "$SOPS_KEY_FILE" ]; then
   exit 0
 fi
 
-if ! curl -sS -f -o "$TEMP_FILE" "$SECRETS_URL"; then
-  echo "[fetch-pat] ERROR: Failed to download secrets from $SECRETS_URL"
+if ! curl --retry 5 --retry-delay 10 --retry-all-errors -sS -f -o "$TEMP_FILE" "$SECRETS_URL"; then
+  echo "[fetch-pat] ERROR: Failed to download secrets from $SECRETS_URL after multiple attempts"
   exit 1
 fi
 AGE_KEY=$(ssh-to-age -private-key -i "$SOPS_KEY_FILE")
