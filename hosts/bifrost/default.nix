@@ -7,6 +7,7 @@ in
 
   imports = [
     ./adguardhome.nix
+    ./unbound.nix
   ];
 
   frablab.base.networking.useDefaultDhcp = false;
