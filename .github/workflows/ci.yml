@@ -16,12 +16,22 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Generate GitHub App Token for frablab-config
+        uses: actions/create-github-app-token@v3
+        id: generate-token-frablab-config
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          repositories: "frablab-config"
+          permission-contents: "read"
+          permission-metadata: "read"
+
       - name: Install Nix
         uses: cachix/install-nix-action@v31
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+            access-tokens = github.com=${{ steps.generate-token-frablab-config.outputs.token }}
 
       - name: Setup Cachix
         uses: cachix/cachix-action@v16
@@ -63,12 +73,22 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Generate GitHub App Token for frablab-config
+        uses: actions/create-github-app-token@v3
+        id: generate-token-frablab-config
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          repositories: "frablab-config"
+          permission-contents: "read"
+          permission-metadata: "read"
+
       - name: Install Nix
         uses: cachix/install-nix-action@v31
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+            access-tokens = github.com=${{ steps.generate-token-frablab-config.outputs.token }}
 
       - name: Setup Cachix
         uses: cachix/cachix-action@v16
