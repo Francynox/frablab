@@ -18,6 +18,16 @@ jobs:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
+      - name: Generate GitHub App Token for frablab-config
+        uses: actions/create-github-app-token@v3
+        id: generate-token-frablab-config
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          repositories: "frablab-config"
+          permission-contents: "read"
+          permission-metadata: "read"
+
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
@@ -27,7 +37,7 @@ jobs:
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+            access-tokens = github.com=${{ steps.generate-token-frablab-config.outputs.token }}
 
       - name: Update flake.lock
         id: update
