@@ -1,5 +1,6 @@
 { inputs, ... }:
 let
+  unboundConfig = inputs.frablab-config + "/unbound/unbound.conf";
   unboundConfigEtcPath = "unbound/unbound.conf";
 in
 {
@@ -9,12 +10,12 @@ in
         enable = true;
         configFile = "/etc/${unboundConfigEtcPath}";
         extraRestartTriggers = [
-          "${inputs.frablab-config}/unbound/unbound.conf"
+          unboundConfig
         ];
       };
 
       mutable-configs."${unboundConfigEtcPath}" = {
-        source = "${inputs.frablab-config}/unbound/unbound.conf";
+        source = unboundConfig;
       };
     };
   };
