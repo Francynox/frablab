@@ -1,6 +1,11 @@
 {
   flake.nixosModules.base-networking =
-    { config, lib, ... }:
+    {
+      config,
+      lib,
+      constants,
+      ...
+    }:
     let
       cfg-base = config.frablab.base;
       cfg = cfg-base.networking;
@@ -25,6 +30,16 @@
           default = true;
           description = "Enable default DHCP configuration for eth* and en* interfaces";
         };
+        search = lib.mkOption {
+          type = lib.types.listOf lib.types.str;
+          default = [ constants.domain ];
+          description = "Search domains to use";
+        };
+        domain = lib.mkOption {
+          type = lib.types.str;
+          default = constants.domain;
+          description = "Local domain name";
+        };
       };
 
       config = lib.mkIf cfg.enable {
@@ -33,6 +48,8 @@
           useNetworkd = cfg.backend == "networkd";
           useDHCP = false;
           useHostResolvConf = lib.mkIf (cfg.backend == "networkd") false;
+          inherit (cfg) search;
+          inherit (cfg) domain;
         };
 
         systemd.network = lib.mkIf (cfg.backend == "networkd" && cfg.useDefaultDhcp) {
