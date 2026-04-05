@@ -17,10 +17,15 @@ in
       networkConfig = {
         Address = ip.services.bifrost.address;
         Gateway = ip.services.gateway;
+        DNS = [ "127.0.0.1" ];
       };
     };
   };
 
-  networking.resolvconf.useLocalResolver = true;
-  services.resolved.enable = false;
+  services.resolved = {
+    enable = true;
+    extraConfig = ''
+      DNSStubListener=no
+    '';
+  };
 }
