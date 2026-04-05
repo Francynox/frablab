@@ -1,7 +1,4 @@
-{ inputs, ... }:
-let
-  ip = import "${inputs.frablab-config}/general/network.nix";
-in
+{ constants, ... }:
 {
   networking.hostName = "bifrost";
 
@@ -15,8 +12,8 @@ in
     networks."10-default" = {
       matchConfig.Name = "eth0";
       networkConfig = {
-        Address = ip.services.bifrost.address;
-        Gateway = ip.services.gateway;
+        Address = constants.network.services.bifrost.address;
+        Gateway = constants.network.services.gateway;
         DNS = [ "127.0.0.1" ];
       };
     };

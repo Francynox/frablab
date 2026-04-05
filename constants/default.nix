@@ -1,13 +1,16 @@
-{ lib, ... }:
+{ lib, inputs, ... }:
 let
   constants = import ./_constants.nix;
+  network = import "${inputs.frablab-config}/general/network.nix";
 in
 {
   options.constants = lib.mkOption {
-    type = lib.types.attrsOf lib.types.str;
+    type = lib.types.attrs;
     default = { };
     description = "Project-wide shared constants internal to the flake module system.";
   };
 
-  config.constants = constants;
+  config.constants = constants // {
+    inherit network;
+  };
 }
