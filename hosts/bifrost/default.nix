@@ -15,7 +15,7 @@ in
     networks."10-default" = {
       matchConfig.Name = "eth0";
       networkConfig = {
-        Address = ip.services.bifrost;
+        Address = ip.services.bifrost.address;
         Gateway = ip.services.gateway;
       };
     };

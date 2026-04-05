@@ -109,11 +109,11 @@
     "frablab-config": {
       "flake": false,
       "locked": {
-        "lastModified": 1775405431,
-        "narHash": "sha256-hm7nH4uHhN9rP1ErRNDiG3dFlcxjekJDdvm3WypCsEY=",
+        "lastModified": 1775417968,
+        "narHash": "sha256-OMuQ9AWjJW9BTkVdXkx6BgDqUl16FiXlf0pbG+2tqJw=",
         "owner": "francynox",
         "repo": "frablab-config",
-        "rev": "6adc6826a48f2a9dd31f8da7254843d39183900c",
+        "rev": "d4cba18d3038e878abed57e0da14ffdf08f43ce1",
         "type": "github"
       },
       "original": {
