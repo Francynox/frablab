@@ -109,11 +109,11 @@
     "frablab-config": {
       "flake": false,
       "locked": {
-        "lastModified": 1775256057,
-        "narHash": "sha256-CSdrTt4NzJceH+6XcFfcBeNE+DD5Hjkkhd+pzzsR66o=",
+        "lastModified": 1775405431,
+        "narHash": "sha256-hm7nH4uHhN9rP1ErRNDiG3dFlcxjekJDdvm3WypCsEY=",
         "owner": "francynox",
         "repo": "frablab-config",
-        "rev": "98151fed7f830b8d6e11411f870e95caf20a8360",
+        "rev": "6adc6826a48f2a9dd31f8da7254843d39183900c",
         "type": "github"
       },
       "original": {
@@ -369,11 +369,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1775332900,
-        "narHash": "sha256-0P//cMIMyQgnmWfBqwPZ7WjrlR0uXpwgnGa3ybRa/Tk=",
+        "lastModified": 1775410826,
+        "narHash": "sha256-ghdr8Ol1WZTzHeSTeM2A9lUdeOeuwUN4r7iipee4+lg=",
         "owner": "francynox",
         "repo": "nur-packages",
-        "rev": "5c5be91b6530176b2b0d97ba86fd894410abce83",
+        "rev": "b036f975071e8fa5ac558724a3a8b351d0dc8f8a",
         "type": "github"
       },
       "original": {
@@ -406,11 +406,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1775188331,
-        "narHash": "sha256-/0BoSi0Dg0ON7IW0oscM12WSPBaMSCn36XTt0lHZoy8=",
+        "lastModified": 1775365543,
+        "narHash": "sha256-f50qrK0WwZ9z5EdaMGWOTtALgSF7yb7XwuE7LjCuDmw=",
         "owner": "Mic92",
         "repo": "sops-nix",
-        "rev": "8f093d0d2f08f37317778bd94db5951d6cce6c46",
+        "rev": "a4ee2de76efb759fe8d4868c33dec9937897916f",
         "type": "github"
       },
       "original": {
