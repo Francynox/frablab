@@ -1,15 +1,20 @@
-{ inputs, ... }:
+{ constants, ... }:
 {
   networking.hostName = "mimir";
 
-  services.francynox.bind = {
-    enable = true;
-    configFile = "/etc/named.conf";
-  };
+  imports = [
+    ./bind.nix
+  ];
 
-  services.francynox.mutable-configs = {
-    "bind/named.conf" = {
-      source = "${inputs.frablab-config}/bind/named.conf";
+  frablab.base.networking.useDefaultDhcp = false;
+  systemd.network = {
+    networks."10-default" = {
+      matchConfig.Name = "eth0";
+      networkConfig = {
+        Address = constants.network.services.mimir.address;
+        Gateway = constants.network.services.gateway;
+        DNS = [ constants.network.services.bifrost.ip ];
+      };
     };
   };
 }
