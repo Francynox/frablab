@@ -97,3 +97,11 @@ jobs:
 
       - name: Build ${{ matrix.host }}
         run: nix build .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel --print-build-logs
+
+  ci-success:
+    name: "CI Success"
+    runs-on: ubuntu-latest
+    needs: [flake-check, build-hosts]
+    steps:
+      - name: Success
+        run: echo "CI completed successfully"
