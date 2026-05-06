@@ -20,6 +20,7 @@ let
 
         modules = [
           inputs.self.nixosModules.base
+          inputs.self.nixosModules.network
           ./${name}
         ]
         ++ inputs.nixpkgs.lib.optionals (type == "lxc") [

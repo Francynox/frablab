@@ -1,4 +1,4 @@
-{ constants, ... }:
+{ config, ... }:
 {
   networking.hostName = "mimir";
 
@@ -11,10 +11,17 @@
     networks."10-default" = {
       matchConfig.Name = "eth0";
       networkConfig = {
-        Address = constants.network.services.mimir.address;
-        Gateway = constants.network.services.gateway;
-        DNS = [ constants.network.services.bifrost.ip ];
+        Address = config.frablab.network.hosts.service.mimir.address;
+        Gateway = config.frablab.network.hosts.service.gateway.ip;
+        DNS = [ config.frablab.network.hosts.service.bifrost.ip ];
       };
     };
+  };
+
+  services.resolved = {
+    enable = true;
+    extraConfig = ''
+      DNSStubListener=no
+    '';
   };
 }

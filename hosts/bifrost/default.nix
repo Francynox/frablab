@@ -1,4 +1,4 @@
-{ constants, ... }:
+{ config, ... }:
 {
   networking.hostName = "bifrost";
 
@@ -12,8 +12,8 @@
     networks."10-default" = {
       matchConfig.Name = "eth0";
       networkConfig = {
-        Address = constants.network.services.bifrost.address;
-        Gateway = constants.network.services.gateway;
+        Address = config.frablab.network.hosts.service.bifrost.address;
+        Gateway = config.frablab.network.hosts.service.gateway.ip;
         DNS = [ "127.0.0.1" ];
       };
     };

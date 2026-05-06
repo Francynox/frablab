@@ -1,7 +1,11 @@
-{ config, inputs, ... }:
+{
+  config,
+  inputs,
+  ...
+}:
 let
   cfg = config.services.francynox.adguardhome;
-  adguardHomeConfig = inputs.frablab-config + "/adguardhome/AdGuardHome.yaml";
+  adguardHomeConfig = inputs.frablab-config.lib.adguardhome;
   adguardHomeConfigEtcPath = "adguardhome/AdGuardHome.yaml";
 in
 {

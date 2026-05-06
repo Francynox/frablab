@@ -55,7 +55,7 @@
 
     frablab-config = {
       url = "github:francynox/frablab-config";
-      flake = false;
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
