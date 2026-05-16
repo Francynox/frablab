@@ -68,16 +68,22 @@ in
         };
       };
 
-      checks.conventions =
-        pkgs.runCommand "check-conventions"
-          {
-            nativeBuildInputs = [ pkgs.python3 ];
-            src = inputs.self;
-          }
-          ''
-            python3 $src/scripts/check_conventions.py $src/parts
-            mkdir $out
-          '';
+      checks = {
+        conventions =
+          pkgs.runCommand "check-conventions"
+            {
+              nativeBuildInputs = [ pkgs.python3 ];
+              src = inputs.self;
+            }
+            ''
+              python3 $src/scripts/check_conventions.py $src/parts
+              mkdir $out
+            '';
+
+        network-data = pkgs.runCommand "check-network-data" { } ''
+          echo '${builtins.toJSON inputs.self.nixosConfigurations.mimir.config.frablab.network}' > $out
+        '';
+      };
 
       devShells.default = pkgs.mkShell {
         shellHook = ''

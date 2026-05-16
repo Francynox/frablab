@@ -14,6 +14,7 @@
 
       subnetSubmodule = lib.types.submodule {
         options = {
+          id = lib.mkOption { type = lib.types.int; };
           prefix = lib.mkOption { type = lib.types.str; };
           mask = lib.mkOption { type = lib.types.int; };
           dhcpRange = lib.mkOption {
@@ -23,6 +24,10 @@
                 end = lib.mkOption { type = lib.types.int; };
               };
             };
+          };
+          validLifetime = lib.mkOption {
+            type = lib.types.nullOr lib.types.int;
+            default = null;
           };
         };
       };

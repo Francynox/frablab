@@ -4,6 +4,7 @@
 
   imports = [
     ./bind.nix
+    ./kea.nix
   ];
 
   frablab.base.networking.useDefaultDhcp = false;
