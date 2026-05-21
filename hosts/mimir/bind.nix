@@ -22,6 +22,7 @@ let
         dhcpKeyFile = "${dhcpKeyFile}";
       }
     );
+    nsupdateScript = pkgs.writeText "nsupdate-static-reverse.txt" inputs.frablab-config.lib.bind.nsupdateScriptContent;
     inherit (inputs.frablab-config.lib.bind) rndcKey dhcpKey;
   };
 
@@ -80,6 +81,31 @@ in
           pathToCheck = "${cfg.dataDir}/${name}";
         }
       ) dnsZones.staticZoneFiles);
+    };
+  };
+
+  systemd.services.named-static-reverse-dns = {
+    description = "Update static PTR records in dynamic reverse zones";
+    after = [ "named.service" ];
+    requires = [ "named.service" ];
+    partOf = [ "named.service" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = pkgs.writeShellScript "update-static-reverse" ''
+        retries=30
+        until ${cfg.package}/bin/rndc -k ${cfg.rndcKeyFile} status >/dev/null 2>&1; do
+          if [ "$retries" -le 0 ]; then
+            echo "Timeout waiting for BIND to be responsive." >&2
+            exit 1
+          fi
+          sleep 1
+          retries=$((retries - 1))
+        done
+
+        ${cfg.package}/bin/nsupdate -k ${dhcpKeyFile} ${bind.nsupdateScript}
+      '';
+      RemainAfterExit = true;
     };
   };
 
