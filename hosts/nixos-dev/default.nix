@@ -82,6 +82,7 @@
         "Projects"
         ".vscode-server"
         ".antigravity-server"
+        ".antigravity-ide-server"
         ".gemini"
         ".npm-global"
       ];
