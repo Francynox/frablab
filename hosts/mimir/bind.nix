@@ -7,14 +7,18 @@
 }:
 let
   cfg = config.services.francynox.bind;
+
+  bindConfigEtcPath = "bind/named.conf";
+  staticZonesPrefix = "bind/zones_static";
+  dhcpKeyFile = "/etc/bind/dhcp-ddns.key";
+
+  writeZone = name: content: pkgs.writeText name content;
+
   dnsZones = {
-    staticZoneFiles = builtins.mapAttrs (
-      name: content: pkgs.writeText name content
-    ) frablabConfig.dnsZones.staticZoneFiles;
-    dynamicZoneFiles = builtins.mapAttrs (
-      name: content: pkgs.writeText name content
-    ) frablabConfig.dnsZones.dynamicZoneFiles;
+    staticZoneFiles = builtins.mapAttrs writeZone frablabConfig.dnsZones.staticZoneFiles;
+    dynamicZoneFiles = builtins.mapAttrs writeZone frablabConfig.dnsZones.dynamicZoneFiles;
   };
+
   bind = {
     namedConf = pkgs.writeText "named.conf" (
       frablabConfig.bind.namedConf {
@@ -25,10 +29,6 @@ let
     nsupdateScript = pkgs.writeText "nsupdate-static-reverse.txt" frablabConfig.bind.nsupdateScriptContent;
     inherit (frablabConfig.bind) rndcKey dhcpKey;
   };
-
-  bindConfigEtcPath = "bind/named.conf";
-  staticZonesPrefix = "bind/zones_static";
-  dhcpKeyFile = "/etc/bind/dhcp-ddns.key";
 in
 {
   sops.secrets = {
