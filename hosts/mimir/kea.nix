@@ -1,18 +1,18 @@
 {
   pkgs,
   config,
-  inputs,
+  frablabConfig,
   ...
 }:
 let
   cfg = config.services.francynox.kea;
 
   dhcp4StaticConfig = (pkgs.formats.json { }).generate "kea-dhcp4.json" (
-    inputs.frablab-config.lib.kea.mkDhcp4Config { }
+    frablabConfig.kea.mkDhcp4Config { }
   );
 
   dhcpDdnsConfigJson = (pkgs.formats.json { }).generate "kea-dhcp-ddns.json" (
-    inputs.frablab-config.lib.kea.mkDhcpDdnsConfig {
+    frablabConfig.kea.mkDhcpDdnsConfig {
       inherit dhcpDdnsKeyPath;
     }
   );
@@ -23,7 +23,7 @@ let
 in
 {
   sops.secrets.kea-dhcp-key = {
-    sopsFile = inputs.frablab-config.lib.kea.keaDhcpKey;
+    sopsFile = frablabConfig.kea.keaDhcpKey;
     path = dhcpDdnsKeyPath;
     format = "binary";
     mode = "0600";

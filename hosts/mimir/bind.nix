@@ -2,7 +2,7 @@
   pkgs,
   lib,
   config,
-  inputs,
+  frablabConfig,
   ...
 }:
 let
@@ -10,20 +10,20 @@ let
   dnsZones = {
     staticZoneFiles = builtins.mapAttrs (
       name: content: pkgs.writeText name content
-    ) inputs.frablab-config.lib.dnsZones.staticZoneFiles;
+    ) frablabConfig.dnsZones.staticZoneFiles;
     dynamicZoneFiles = builtins.mapAttrs (
       name: content: pkgs.writeText name content
-    ) inputs.frablab-config.lib.dnsZones.dynamicZoneFiles;
+    ) frablabConfig.dnsZones.dynamicZoneFiles;
   };
   bind = {
     namedConf = pkgs.writeText "named.conf" (
-      inputs.frablab-config.lib.bind.namedConf {
+      frablabConfig.bind.namedConf {
         inherit (cfg) dataDir;
         dhcpKeyFile = "${dhcpKeyFile}";
       }
     );
-    nsupdateScript = pkgs.writeText "nsupdate-static-reverse.txt" inputs.frablab-config.lib.bind.nsupdateScriptContent;
-    inherit (inputs.frablab-config.lib.bind) rndcKey dhcpKey;
+    nsupdateScript = pkgs.writeText "nsupdate-static-reverse.txt" frablabConfig.bind.nsupdateScriptContent;
+    inherit (frablabConfig.bind) rndcKey dhcpKey;
   };
 
   bindConfigEtcPath = "bind/named.conf";

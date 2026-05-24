@@ -34,6 +34,7 @@ in
           constants
           ;
         inherit (inputs) self;
+        frablabConfig = inputs.frablab-config.lib;
       };
     in
     {

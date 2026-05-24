@@ -1,11 +1,11 @@
 {
   flake.nixosModules.network =
-    { inputs, ... }:
+    { frablabConfig, ... }:
     {
       imports = [
-        inputs.frablab-config.lib.networkSchema
+        frablabConfig.networkSchema
       ];
 
-      config.frablab.network = inputs.frablab-config.lib.network;
+      config.frablab.network = frablabConfig.network;
     };
 }

@@ -1,11 +1,12 @@
 {
   config,
   inputs,
+  frablabConfig,
   ...
 }:
 let
   cfg = config.services.francynox.adguardhome;
-  adguardHomeConfig = inputs.frablab-config.lib.adguardhome;
+  adguardHomeConfig = frablabConfig.adguardhome;
   adguardHomeConfigEtcPath = "adguardhome/AdGuardHome.yaml";
 in
 {
