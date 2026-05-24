@@ -26,7 +26,7 @@
         sshAuthorizedKeys = lib.mkOption {
           type = lib.types.listOf lib.types.str;
           default = [
-            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJyYmElWbBrcNn+JDXUvV0VZP9ITcnVtW/h2Y26g2TP7"
+            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJcEAwMkXM8xXimM49TTDdlSkOv04XJRtqa0JNBe0T5C"
           ];
           description = "SSH authorized keys for the deploy user";
         };
