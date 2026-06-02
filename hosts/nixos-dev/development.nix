@@ -9,8 +9,8 @@
     uv
     nodejs_24
     xauth
-    xorg.xclock
-    xorg.xeyes
+    xclock
+    xeyes
   ];
 
   environment.sessionVariables = {
