@@ -3,9 +3,13 @@ keys:
   - &bifrost age10fgpd43m8rmucu3ltjf6g7p0rulw2anwt46lhuwkgz60gzr84cuqr67vqa
   - &mimir age1dhcmx4fw7ugljkcsxlk5ksns8j343g6608tsj7e6a8e2z4lp9ews6ldegl
 creation_rules:
-  - path_regex: secrets/[^/]+(\.(yaml|json|env|ini|conf))?$
+  - path_regex: secrets/secrets.yaml
     key_groups:
       - age:
-        - *nixos-dev
-        - *bifrost
-        - *mimir
+          - *nixos-dev
+          - *bifrost
+          - *mimir
+  - path_regex: secrets/deploy-ssh-key
+    key_groups:
+      - age:
+          - *nixos-dev

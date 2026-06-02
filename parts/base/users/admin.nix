@@ -3,6 +3,7 @@
     {
       config,
       lib,
+      self,
       ...
     }:
     let
@@ -38,6 +39,12 @@
           description = "SSH authorized keys for the user";
         };
 
+        passwordlessSudo = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          description = "Allow the admin user to run sudo without a password.";
+        };
+
         extraGroups = lib.mkOption {
           type = lib.types.listOf lib.types.str;
           default = [ ];
@@ -55,9 +62,24 @@
           default = [ ];
           description = "Directories to persist for the user";
         };
+
+        exportDeploySshKey = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          description = "Export the deployment SSH key to the admin's .ssh directory";
+        };
       };
 
       config = lib.mkIf cfg.enable {
+        sops.secrets.admin-deploy-ssh-key = lib.mkIf cfg.exportDeploySshKey {
+          sopsFile = self + "/secrets/deploy-ssh-key";
+          format = "binary";
+          path = "/home/${cfg.name}/.ssh/deploy-ssh-key";
+          owner = cfg.name;
+          group = cfg.name;
+          mode = "0600";
+        };
+
         users.groups.${cfg.name} = { };
         users.users.${cfg.name} = {
           isNormalUser = true;
@@ -71,6 +93,18 @@
           openssh.authorizedKeys.keys = cfg.sshAuthorizedKeys;
           inherit (cfg) initialHashedPassword;
         };
+
+        security.sudo.extraRules = lib.mkIf cfg.passwordlessSudo [
+          {
+            users = [ cfg.name ];
+            commands = [
+              {
+                command = "ALL";
+                options = [ "NOPASSWD" ];
+              }
+            ];
+          }
+        ];
 
         environment.persistence = lib.mkIf cfg-persistence.enable {
           "/nix/persist" = {

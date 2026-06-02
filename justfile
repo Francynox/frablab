@@ -20,8 +20,7 @@ deploy machine ip="":
         echo "🚀 Deploying to {{machine}} at {{ip}}..."
         nixos-rebuild switch --no-reexec --flake ".#{{machine}}" \
             --sudo \
-            --target-host "deploy@{{ip}}" \
-            --build-host "deploy@{{ip}}"
+            --target-host "deploy@{{ip}}"
     fi
 
 # Update flake.lock
@@ -57,20 +56,26 @@ gc:
     sudo nix profile wipe-history --profile /nix/var/nix/profiles/system --older-than 7d
     sudo nix-collect-garbage --delete-old
 
-# Verify and repair Nix store
+# Verify and repair Nix store (local or remote)
 [no-exit-message]
-repair:
-    @echo "⚠️  WARNING: This will verify and repair the nix store."
-    @read -p "Are you sure? [y/N] " -n 1 -r; echo; [[ $REPLY =~ ^[Yy]$ ]] || exit 1
-    sudo nix-store --verify --check-contents --repair
+repair ip="":
+    #!/usr/bin/env bash
+    echo "⚠️  WARNING: This will verify and repair the nix store."
+    read -p "Are you sure? [y/N] " -n 1 -r; echo
+    [[ $REPLY =~ ^[Yy]$ ]] || exit 1
+    if [ -z "{{ip}}" ]; then
+        sudo nix-store --verify --check-contents --repair
+    else
+        ssh -t deploy@{{ip}} "sudo nix-store --verify --check-contents --repair"
+    fi
 
 #-------------------------------------------------------------------------------
 # Secrets Management (SOPS)
 #-------------------------------------------------------------------------------
 
-# Edit main secrets file
-sopsedit:
-    sops secrets/secrets.yaml
+# Edit secrets file
+sopsedit file="secrets/secrets.yaml":
+    sops {{file}}
 
 # Rotate keys for all secrets
 sopsrotate:

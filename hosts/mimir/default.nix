@@ -1,4 +1,4 @@
-{ config, ... }:
+{ ... }:
 {
   networking.hostName = "mimir";
 
@@ -7,24 +7,11 @@
     ./kea.nix
   ];
 
-  frablab.base.networking.useDefaultDhcp = false;
-  systemd.network = {
-    networks."10-default" = {
-      matchConfig.Name = "eth0";
-      networkConfig = {
-        Address = config.frablab.network.hosts.service.mimir.address;
-        Gateway = config.frablab.network.hosts.service.gateway.ip;
-        DNS = [ config.frablab.network.hosts.service.bifrost.ip ];
-      };
-    };
-  };
-
-  services.resolved = {
-    enable = true;
-    settings = {
-      Resolve = {
-        DNSStubListener = "no";
-      };
+  frablab.base.networking = {
+    mode = "static";
+    static = {
+      subnet = "service";
+      disableStubResolver = true;
     };
   };
 }

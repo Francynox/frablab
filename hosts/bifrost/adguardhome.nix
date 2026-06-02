@@ -1,6 +1,5 @@
 {
   config,
-  inputs,
   frablabConfig,
   ...
 }:
@@ -10,10 +9,6 @@ let
   adguardHomeConfigEtcPath = "adguardhome/AdGuardHome.yaml";
 in
 {
-  imports = [
-    inputs.sops-nix.nixosModules.sops
-  ];
-
   sops.secrets = {
     adguardhome-config = {
       sopsFile = adguardHomeConfig;

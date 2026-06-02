@@ -25,7 +25,6 @@
 
       config = lib.mkIf cfg.enable {
         users.mutableUsers = false;
-        security.sudo.wheelNeedsPassword = false;
       };
     };
 }

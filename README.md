@@ -14,10 +14,9 @@ Nix configurations for my homelab.
 
 This repository contains configurations for the following hosts:
 
-- **`nixos-dev`**: Development machine (NixOS).
-- **`bind`**: DNS server (NixOS Container / LXC).
-- **`kea`**: DHCP server (NixOS Container / LXC).
-- **`adguardhome`**: AdGuard Home (NixOS Container / LXC).
+- **`nixos-dev`**: Development machine (KVM).
+- **`bifrost`**: Core network services host running AdGuard Home and Unbound (LXC).
+- **`mimir`**: Infrastructure host running Bind and Kea DHCP (LXC).
 
 ## Getting Started
 
@@ -31,8 +30,8 @@ Deploy to a local or remote machine:
 # Deploy to the 'nixos-dev' host (local)
 just deploy nixos-dev
 
-# Deploy to the 'bind' host at a specific IP
-just deploy bind 10.0.10.5
+# Deploy to the 'mimir' host at a specific IP
+just deploy mimir 10.0.80.249
 ```
 
 ### Build Artifacts
@@ -75,4 +74,10 @@ just format
 
 # Garbage collect old generations (Systems & Profiles)
 just gc
+
+# Verify and repair local Nix store
+just repair
+
+# Verify and repair remote Nix store
+just repair 10.0.80.249
 ```

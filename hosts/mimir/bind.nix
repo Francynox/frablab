@@ -35,8 +35,7 @@ in
     bind-rndc-key = {
       sopsFile = bind.rndcKey;
       path = cfg.rndcKeyFile;
-      format = "json";
-      key = "data";
+      format = "binary";
       mode = "0600";
       owner = cfg.user;
       inherit (cfg) group;
@@ -45,8 +44,7 @@ in
     bind-dhcp-key = {
       sopsFile = bind.dhcpKey;
       path = dhcpKeyFile;
-      format = "json";
-      key = "data";
+      format = "binary";
       mode = "0600";
       owner = cfg.user;
       inherit (cfg) group;

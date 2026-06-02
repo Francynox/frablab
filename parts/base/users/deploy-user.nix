@@ -38,17 +38,13 @@
         };
       };
 
-      config = lib.mkIf cfg.enable {
-        users.groups.${cfg.name} = { };
-        users.users.${cfg.name} = lib.mkIf cfg.enable {
-          isNormalUser = true;
-          description = "Deployment User";
-          group = lib.mkForce cfg.name;
-          extraGroups = [ "wheel" ];
-          openssh.authorizedKeys.keys = cfg.sshAuthorizedKeys;
+      config = {
+        services.francynox.deploy-user = {
+          inherit (cfg) enable;
+          inherit (cfg) name;
+          inherit (cfg) sshAuthorizedKeys;
+          inherit (cfg) autologin;
         };
-
-        services.getty.autologinUser = lib.mkIf cfg.autologin cfg.name;
       };
     };
 }

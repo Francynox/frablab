@@ -1,6 +1,11 @@
 {
   flake.nixosModules.vm-efi =
-    { config, lib, ... }:
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
     let
       cfg = config.frablab.vm.efi;
     in
@@ -21,6 +26,8 @@
 
       config = {
         boot = {
+          kernelPackages = pkgs.linuxPackages_latest;
+
           initrd = {
             availableKernelModules = [
               "ata_piix"

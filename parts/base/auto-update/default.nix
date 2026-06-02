@@ -1,82 +1,52 @@
 {
   flake.nixosModules.base-auto-update =
     {
+      self,
       config,
-      pkgs,
       lib,
-      constants,
       ...
     }:
     let
       cfg-base = config.frablab.base;
       cfg = cfg-base.auto-update;
-
-      fetchPatScript = pkgs.replaceVarsWith {
-        src = ./fetch-pat.sh;
-        isExecutable = true;
-        replacements = {
-          inherit (pkgs) runtimeShell;
-          path = lib.makeBinPath [
-            pkgs.coreutils
-            pkgs.curl
-            pkgs.sops
-            pkgs.ssh-to-age
-          ];
-          inherit (constants) sopsKeyPath;
-          inherit (constants) remoteSecretsUrl;
-        };
-      };
     in
     {
+      imports = [
+        self.nixosModules.base-auto-update-pull
+        self.nixosModules.base-auto-update-push
+        self.nixosModules.base-auto-update-push-server
+      ];
+
       options.frablab.base.auto-update = {
         enable = lib.mkOption {
           type = lib.types.bool;
           default = cfg-base.enable;
-          description = "Enable auto-update";
+          description = "Enable auto-update overall";
         };
 
-        auto-reboot = lib.mkOption {
-          type = lib.types.bool;
-          default = true;
-          description = "Enable auto-reboot";
+        mode = lib.mkOption {
+          type = lib.types.enum [
+            "pull"
+            "push"
+          ];
+          default = "pull";
+          description = ''
+            Auto-update mode.
+
+            - pull: Pulls updates from the flake repository on boot.
+            - push: Triggers a push-based update via a webhook.
+          '';
         };
       };
 
       config = lib.mkIf cfg.enable {
-        system.autoUpgrade = {
-          enable = true;
-          dates = "*-*-* 02:00:00";
-          randomizedDelaySec = "1h";
-          flake = constants.flakeUrl;
-          allowReboot = cfg.auto-reboot && !config.boot.isContainer;
+        frablab.base.auto-update.pull.enable = cfg.mode == "pull";
+        frablab.base.auto-update.push.enable = cfg.mode == "push";
+
+        services.francynox.auto-update = {
+          inherit (cfg) enable;
+          inherit (cfg) mode;
         };
-
-        # Oneshot service to fetch and decrypt the GitHub PAT on boot
-        systemd.services.fetch-github-pat = {
-          description = "Fetch and decrypt GitHub PAT for private repo access";
-          wantedBy = [ "multi-user.target" ];
-          before = [ "nixos-upgrade.service" ];
-          requiredBy = [ "nixos-upgrade.service" ];
-          wants = [ "network-online.target" ];
-          after = [ "network-online.target" ];
-          serviceConfig = {
-            Type = "oneshot";
-            ExecStart = fetchPatScript;
-          };
-        };
-
-        # Ensure nixos-upgrade uses the PAT
-        systemd.services.nixos-upgrade.environment.NIX_USER_CONF_FILES = "/run/nix-private-access.conf";
-
-        # Make PAT available for manual nixos-rebuild in interactive shells
-        environment.sessionVariables.NIX_USER_CONF_FILES = "/run/nix-private-access.conf";
-
-        # Expose the fetch script for manual use
-        environment.systemPackages = [
-          (pkgs.writeShellScriptBin "fetch-pat" ''
-            exec ${fetchPatScript}
-          '')
-        ];
       };
     };
 }
