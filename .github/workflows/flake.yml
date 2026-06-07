@@ -15,14 +15,14 @@ jobs:
         uses: actions/create-github-app-token@v3
         id: generate-token
         with:
-          app-id: ${{ secrets.APP_ID }}
+          client-id: ${{ vars.APP_CLIENT_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
       - name: Generate GitHub App Token for frablab-config
         uses: actions/create-github-app-token@v3
         id: generate-token-frablab-config
         with:
-          app-id: ${{ secrets.APP_ID }}
+          client-id: ${{ vars.APP_CLIENT_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
           repositories: "frablab-config"
           permission-contents: "read"
@@ -43,7 +43,7 @@ jobs:
         id: update
         run: |
           nix flake update
-          
+
           if [[ -n $(git status --porcelain flake.lock) ]]; then
             echo "changed=true" >> $GITHUB_OUTPUT
           else
@@ -63,7 +63,7 @@ jobs:
           title: "chore(deps): bump flake.lock"
           body: |
             Automated update of `flake.lock`.
-            
+
             This PR updates the flake inputs to their latest versions.
             If the CI passes, this will be auto-merged.
           branch: "chore/update-flake-lock"
