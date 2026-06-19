@@ -28,7 +28,7 @@ jobs:
           permission-contents: "read"
           permission-metadata: "read"
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
