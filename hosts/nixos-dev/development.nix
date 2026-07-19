@@ -31,24 +31,17 @@
   programs = {
     git.enable = true;
     direnv.enable = true;
-    nix-ld = {
-      enable = true;
-      libraries = with pkgs; [
-        stdenv.cc.cc.lib
-        zlib
-        openssl
-        curl
-        glib
-        util-linux
-        icu
-        libunwind
-        libuuid
-      ];
-    };
   };
 
   services = {
-    vscode-server.enable = true;
+    vscode-server = {
+      enable = true;
+      installPath = [
+        "$HOME/.vscode-server"
+        "$HOME/.antigravity-ide-server"
+        "$HOME/.antigravity-server"
+      ];
+    };
     openssh = {
       settings = {
         X11Forwarding = true;
