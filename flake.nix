@@ -38,7 +38,6 @@
 
     vscode-server = {
       url = "github:nix-community/nixos-vscode-server";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     import-tree.url = "github:vic/import-tree";
@@ -49,7 +48,7 @@
     };
 
     nur-francynox = {
-      url = "github:francynox/nur-packages";
+      url = "github:francynox/nur-repository";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

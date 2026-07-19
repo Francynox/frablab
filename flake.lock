@@ -458,13 +458,13 @@
         "lastModified": 1784317109,
         "narHash": "sha256-DC5vV2nz/Re0+kJAEELlg/1/0cH+rGSSIfPqhyOXohw=",
         "owner": "francynox",
-        "repo": "nur-packages",
+        "repo": "nur-repository",
         "rev": "23abe3145d50f9c44ab69ddb7d2f65454e105e50",
         "type": "github"
       },
       "original": {
         "owner": "francynox",
-        "repo": "nur-packages",
+        "repo": "nur-repository",
         "type": "github"
       }
     },
