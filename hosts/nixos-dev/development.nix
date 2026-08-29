@@ -11,6 +11,7 @@
     xauth
     xclock
     xeyes
+    ucode
   ];
 
   environment.sessionVariables = {
@@ -31,6 +32,12 @@
   programs = {
     git.enable = true;
     direnv.enable = true;
+    nix-ld = {
+      enable = true;
+      libraries = with pkgs; [
+        stdenv.cc.cc.lib
+      ];
+    };
   };
 
   services = {
