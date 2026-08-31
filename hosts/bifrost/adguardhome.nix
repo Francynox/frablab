@@ -35,6 +35,7 @@ in
           inherit (cfg) user;
           inherit (cfg) group;
           pathToCheck = "${cfg.dataDir}/AdGuardHome.yaml";
+          format = "yaml";
         };
       };
     };

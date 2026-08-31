@@ -3,6 +3,7 @@
     {
       config,
       lib,
+      options,
       ...
     }:
     let
@@ -20,18 +21,18 @@
         webhook = {
           url = lib.mkOption {
             type = lib.types.str;
-            default = "https://${config.frablab.base.auto-update.push.server.domain}/hooks/deploy";
+            default = "http://${config.frablab.base.auto-update.push.server.domain}:${toString options.services.francynox.auto-update.push-server.port.default}/hooks/deploy";
             description = "Webhook URL on builder (nixos-dev) to trigger push";
           };
 
           insecure = lib.mkOption {
             type = lib.types.bool;
-            default = true;
+            default = false;
             description = "Disable SSL verification for curl";
           };
 
           tokenFile = lib.mkOption {
-            type = lib.types.nullOr lib.types.path;
+            type = lib.types.nullOr lib.types.str;
             default = config.sops.secrets.deploy-token.path;
             description = "Path to file containing authorization token for webhook";
           };

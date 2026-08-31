@@ -54,10 +54,6 @@
           tokenFile = config.sops.secrets.deploy-token.path;
           sshKeyFile = config.sops.secrets.deploy-ssh-key.path;
           githubPatFile = config.sops.secrets.github-pat-webhook.path;
-          caddy = {
-            enable = true;
-            inherit (cfg) domain;
-          };
         };
       };
     };

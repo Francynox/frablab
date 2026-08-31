@@ -50,9 +50,11 @@ in
     mutable-configs = {
       "${dhcp4ConfigEtcPath}" = {
         source = dhcp4StaticConfig;
+        format = "json";
       };
       "${dhcpDdnsConfigEtcPath}" = {
         source = dhcpDdnsConfigJson;
+        format = "json";
       };
     };
   };

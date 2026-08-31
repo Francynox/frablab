@@ -18,7 +18,7 @@
           description = "Enable pull-based auto-update";
         };
 
-        auto-reboot = lib.mkOption {
+        autoReboot = lib.mkOption {
           type = lib.types.bool;
           default = true;
           description = "Enable auto-reboot";
@@ -27,7 +27,7 @@
 
       config = lib.mkIf cfg.enable {
         services.francynox.auto-update.pull = {
-          inherit (cfg) auto-reboot;
+          inherit (cfg) autoReboot;
           inherit (constants) flakeUrl;
           secretsUrl = constants.remoteSecretsUrl;
           inherit (constants) sopsKeyPath;
