@@ -23,11 +23,17 @@
           default = true;
           description = "Enable auto-reboot";
         };
+
+        autoRollback = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Automatically rollback target host if deploy or healthcheck fails";
+        };
       };
 
       config = lib.mkIf cfg.enable {
         services.francynox.auto-update.pull = {
-          inherit (cfg) autoReboot;
+          inherit (cfg) autoReboot autoRollback;
           inherit (constants) flakeUrl;
           secretsUrl = constants.remoteSecretsUrl;
           inherit (constants) sopsKeyPath;

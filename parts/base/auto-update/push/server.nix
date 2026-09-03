@@ -24,6 +24,12 @@
           default = config.frablab.network.hosts.mgmt.nixos-dev.fqdn;
           description = "Domain/FQDN of the webhook push server";
         };
+
+        autoRollback = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Automatically rollback target host if deploy or healthcheck fails";
+        };
       };
 
       config = lib.mkIf cfg.enable {
@@ -49,6 +55,7 @@
 
         services.francynox.auto-update.push-server = {
           enable = true;
+          inherit (cfg) autoRollback;
           flakePath = constants.flakeUrl;
           targetUser = config.frablab.base.users.deploy-user.name;
           tokenFile = config.sops.secrets.deploy-token.path;
