@@ -1,12 +1,12 @@
 {
   flake.nixosModules.lxc-configuration =
-    { config, ... }:
+    { config, lib, ... }:
     {
       proxmoxLXC.manageHostName = true;
       proxmoxLXC.manageNetwork = true;
       systemd.services.console-getty.enable = false;
 
-      frablab.base.auto-update.mode = "push";
+      services.francynox.auto-update.mode = lib.mkDefault "push";
       services.francynox.lxc-wipe-on-boot.enable = config.frablab.base.persistence.enable;
     };
 }

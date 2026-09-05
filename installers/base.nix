@@ -4,8 +4,11 @@
 
   frablab.base = {
     enable = true;
+  };
+
+  services.francynox = {
     auto-update.enable = false;
-    users.deploy-user.autologin = true;
+    deploy-user.autologin = true;
   };
 
   nix.settings.accept-flake-config = true;

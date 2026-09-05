@@ -34,10 +34,11 @@
         ];
       };
     };
-    auto-update = {
-      push.server.enable = true;
-      dates = "*-*-* 02:00:00";
-    };
+  };
+
+  services.francynox.auto-update = {
+    push-server.enable = true;
+    dates = "*-*-* 02:00:00";
   };
 
   frablab.base.networking = {

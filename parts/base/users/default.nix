@@ -7,7 +7,8 @@
       ...
     }:
     let
-      cfg = config.frablab.base.users;
+      cfg-base = config.frablab.base;
+      cfg = cfg-base.users;
     in
     {
       imports = [
@@ -18,7 +19,7 @@
       options.frablab.base.users = {
         enable = lib.mkOption {
           type = lib.types.bool;
-          default = true;
+          default = cfg-base.enable;
           description = "Enable users configuration";
         };
       };
