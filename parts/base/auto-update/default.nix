@@ -37,6 +37,12 @@
             - push: Triggers a push-based update via a webhook.
           '';
         };
+
+        dates = lib.mkOption {
+          type = lib.types.str;
+          default = "*-*-* 03:00:00";
+          description = "Cron expression for when to run auto-update.";
+        };
       };
 
       config = lib.mkIf cfg.enable {
@@ -46,6 +52,7 @@
         services.francynox.auto-update = {
           inherit (cfg) enable;
           inherit (cfg) mode;
+          inherit (cfg) dates;
         };
       };
     };
