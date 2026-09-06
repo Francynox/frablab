@@ -12,6 +12,7 @@
     xclock
     xeyes
     ucode
+    just-lsp
   ];
 
   environment.sessionVariables = {
