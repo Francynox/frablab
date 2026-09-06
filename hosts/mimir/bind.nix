@@ -111,6 +111,8 @@ in
     "${cfg.dataDir}"
   ];
 
+  services.resolved.settings.Resolve.DNSStubListener = "no";
+
   networking = {
     firewall = {
       allowedTCPPorts = [

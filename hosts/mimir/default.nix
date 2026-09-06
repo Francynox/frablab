@@ -8,10 +8,6 @@
   ];
 
   frablab.base.networking = {
-    mode = "static";
-    static = {
-      subnet = "service";
-      disableStubResolver = true;
-    };
+    subnet = "service";
   };
 }

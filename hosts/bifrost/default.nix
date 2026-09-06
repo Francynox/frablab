@@ -8,11 +8,7 @@
   ];
 
   frablab.base.networking = {
-    mode = "static";
-    static = {
-      subnet = "service";
-      dns = [ "127.0.0.1" ];
-      disableStubResolver = true;
-    };
+    subnet = "service";
+    dns = [ "127.0.0.1" ];
   };
 }

@@ -41,10 +41,5 @@
     dates = "*-*-* 02:00:00";
   };
 
-  frablab.base.networking = {
-    mode = "static";
-    static = {
-      subnet = "mgmt";
-    };
-  };
+  frablab.base.networking.subnet = "mgmt";
 }
