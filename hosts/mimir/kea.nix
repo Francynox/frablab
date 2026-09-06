@@ -59,7 +59,7 @@ in
     };
   };
 
-  frablab.base.persistence.additionalDirectories = [
+  frablab.base.persistence.directories = [
     "${cfg.dataDir}"
   ];
 

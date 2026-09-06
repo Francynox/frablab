@@ -23,11 +23,9 @@ let
           ./${name}
         ]
         ++ inputs.nixpkgs.lib.optionals (type == "lxc") [
-          "${inputs.nixpkgs}/nixos/modules/virtualisation/proxmox-lxc.nix"
           inputs.self.nixosModules.lxc
         ]
         ++ inputs.nixpkgs.lib.optionals (type == "kvm") [
-          "${inputs.nixpkgs}/nixos/modules/profiles/qemu-guest.nix"
           inputs.self.nixosModules.vm
         ];
       }

@@ -10,7 +10,7 @@
 
   frablab.base = {
     persistence = {
-      additionalDirectories = [
+      directories = [
         "/var/lib/docker"
       ];
     };

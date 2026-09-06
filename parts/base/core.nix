@@ -32,7 +32,6 @@
           };
           upower.enable = true;
           fstrim.enable = true;
-          qemuGuest.enable = true;
         };
 
         time.timeZone = "Europe/Rome";

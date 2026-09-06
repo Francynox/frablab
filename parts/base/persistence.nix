@@ -13,13 +13,19 @@
           description = "Enable persistence configuration";
         };
 
-        additionalDirectories = lib.mkOption {
+        path = lib.mkOption {
+          type = lib.types.str;
+          default = "/nix/persist";
+          description = "Root directory for persistent storage";
+        };
+
+        directories = lib.mkOption {
           type = lib.types.listOf lib.types.str;
           default = [ ];
           description = "Directories to persist";
         };
 
-        additionalFiles = lib.mkOption {
+        files = lib.mkOption {
           type = lib.types.listOf lib.types.str;
           default = [ ];
           description = "Files to persist";
@@ -27,7 +33,7 @@
       };
 
       config = lib.mkIf cfg.enable {
-        environment.persistence."/nix/persist" = {
+        environment.persistence."${cfg.path}" = {
           hideMounts = true;
 
           directories = [
@@ -36,7 +42,7 @@
             "/var/lib/nixos"
             "/root"
           ]
-          ++ cfg.additionalDirectories;
+          ++ cfg.directories;
 
           files = [
             "/etc/machine-id"
@@ -45,7 +51,7 @@
             "/etc/ssh/ssh_host_rsa_key.pub"
             "/etc/ssh/ssh_host_rsa_key"
           ]
-          ++ cfg.additionalFiles;
+          ++ cfg.files;
         };
       };
     };

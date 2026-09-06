@@ -12,6 +12,7 @@
     in
     {
       imports = [
+        "${inputs.nixpkgs}/nixos/modules/profiles/qemu-guest.nix"
         inputs.disko.nixosModules.disko
       ];
 
@@ -42,18 +43,14 @@
       };
 
       config = lib.mkIf cfg.enable {
+        services.qemuGuest.enable = true;
+
         boot = {
           kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
 
           initrd.availableKernelModules = [
-            "ata_piix"
-            "uhci_hcd"
-            "virtio_pci"
-            "virtio_scsi"
             "sd_mod"
             "sr_mod"
-            "virtio_blk"
-            "virtio_net"
           ];
 
           kernelModules = [ "kvm-amd" ];
