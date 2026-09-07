@@ -7,7 +7,7 @@
     ./unbound.nix
   ];
 
-  frablab.base.networking = {
+  frablab.network = {
     subnet = "service";
     dns = [ "127.0.0.1" ];
   };

@@ -10,7 +10,6 @@
     {
       imports = [
         inputs.impermanence.nixosModules.impermanence
-        self.nixosModules.network
         self.nixosModules.base-core
         self.nixosModules.base-packages
         self.nixosModules.base-persistence

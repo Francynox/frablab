@@ -4,10 +4,10 @@
 
   frablab.base = {
     enable = true;
+    auto-update.enable = false;
   };
 
   services.francynox = {
-    auto-update.enable = false;
     deploy-user.autologin = true;
   };
 

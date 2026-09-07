@@ -3,13 +3,13 @@
     {
       config,
       lib,
-      options,
       constants,
       self,
       ...
     }:
     let
       cfg-base = config.frablab.base;
+      cfg = cfg-base.auto-update;
       auCfg = config.services.francynox.auto-update;
       pushServerCfg = auCfg.push-server;
       webhook = config.services.webhook;
@@ -41,7 +41,15 @@
       };
     in
     {
-      config = lib.mkIf cfg-base.enable {
+      options.frablab.base.auto-update = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = cfg-base.enable;
+          description = "Enable frablab auto-update configuration";
+        };
+      };
+
+      config = lib.mkIf cfg.enable {
         services.francynox.auto-update = {
           enable = lib.mkDefault true;
 
@@ -53,7 +61,6 @@
 
           push = {
             webhook = {
-              url = lib.mkDefault "http://${config.frablab.network.hosts.mgmt.nixos-dev.fqdn}:${toString options.services.francynox.auto-update.push-server.port.default}/hooks/deploy";
               tokenFile = config.sops.secrets.deploy-token.path;
             };
           };
