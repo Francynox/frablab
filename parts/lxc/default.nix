@@ -12,6 +12,6 @@
       systemd.services.console-getty.enable = false;
 
       services.francynox.auto-update.mode = lib.mkDefault "push";
-      services.francynox.lxc-wipe-on-boot.enable = config.frablab.base.persistence.enable;
+      services.francynox.lxc-wipe-on-boot.enable = config.frablab.homelab.persistence.enable or false;
     };
 }

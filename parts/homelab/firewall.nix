@@ -1,16 +1,16 @@
 {
-  flake.nixosModules.base-firewall =
+  flake.nixosModules.homelab-firewall =
     { config, lib, ... }:
     let
-      cfg-base = config.frablab.base;
-      cfg = cfg-base.firewall;
+      cfg-homelab = config.frablab.homelab;
+      cfg = cfg-homelab.firewall;
     in
     {
-      options.frablab.base.firewall = {
+      options.frablab.homelab.firewall = {
         enable = lib.mkOption {
           type = lib.types.bool;
-          default = cfg-base.enable;
-          description = "Enable firewall configuration";
+          default = cfg-homelab.enable;
+          description = "Enable homelab firewall configuration with ulogd logging";
         };
       };
 

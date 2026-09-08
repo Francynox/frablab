@@ -1,5 +1,5 @@
 {
-  flake.nixosModules.base-auto-update =
+  flake.nixosModules.homelab-auto-update =
     {
       config,
       lib,
@@ -8,8 +8,8 @@
       ...
     }:
     let
-      cfg-base = config.frablab.base;
-      cfg = cfg-base.auto-update;
+      cfg-homelab = config.frablab.homelab;
+      cfg = cfg-homelab.auto-update;
       auCfg = config.services.francynox.auto-update;
       pushServerCfg = auCfg.push-server;
       webhook = config.services.webhook;
@@ -41,11 +41,11 @@
       };
     in
     {
-      options.frablab.base.auto-update = {
+      options.frablab.homelab.auto-update = {
         enable = lib.mkOption {
           type = lib.types.bool;
-          default = cfg-base.enable;
-          description = "Enable frablab auto-update configuration";
+          default = cfg-homelab.enable;
+          description = "Enable homelab auto-update configuration";
         };
       };
 
@@ -61,6 +61,7 @@
 
           push = {
             webhook = {
+              url = lib.mkDefault "http://${config.frablab.network.hosts.mgmt.nixos-dev.fqdn}:${toString pushServerCfg.port}/hooks/deploy";
               tokenFile = config.sops.secrets.deploy-token.path;
             };
           };

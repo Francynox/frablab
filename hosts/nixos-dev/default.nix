@@ -8,30 +8,32 @@
     ./development.nix
   ];
 
-  frablab.base = {
-    persistence = {
-      directories = [
-        "/var/lib/docker"
-      ];
-    };
+  frablab.homelab.persistence = {
+    directories = [
+      "/var/lib/docker"
+    ];
+  };
 
+  frablab.base = {
     users = {
       enable = true;
       admin = {
         extraGroups = [ "docker" ];
         exportDeploySshKey = true;
         passwordlessSudo = true;
-        persistenceDirectories = [
-          "Projects"
-          ".vscode-server"
-          ".antigravity-server"
-          ".antigravity-ide-server"
-          ".gemini"
-          ".npm-global"
-        ];
-        persistenceFiles = [
-          ".gitconfig"
-        ];
+        persistence = {
+          directories = [
+            "Projects"
+            ".vscode-server"
+            ".antigravity-server"
+            ".antigravity-ide-server"
+            ".gemini"
+            ".npm-global"
+          ];
+          files = [
+            ".gitconfig"
+          ];
+        };
       };
     };
   };
@@ -41,5 +43,5 @@
     dates = "*-*-* 02:00:00";
   };
 
-  frablab.network.subnet = "mgmt";
+  frablab.homelab.network.subnet = "mgmt";
 }

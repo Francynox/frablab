@@ -7,7 +7,7 @@
     ./kea.nix
   ];
 
-  frablab.network = {
+  frablab.homelab.network = {
     subnet = "service";
   };
 }

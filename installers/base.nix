@@ -4,7 +4,6 @@
 
   frablab.base = {
     enable = true;
-    auto-update.enable = false;
   };
 
   services.francynox = {

@@ -3,22 +3,17 @@
     {
       self,
       lib,
-      inputs,
       francynoxModulesList,
       ...
     }:
     {
       imports = [
-        inputs.impermanence.nixosModules.impermanence
         self.nixosModules.base-core
         self.nixosModules.base-packages
-        self.nixosModules.base-persistence
-        self.nixosModules.base-networking
-        self.nixosModules.base-firewall
         self.nixosModules.base-ssh
         self.nixosModules.base-users
         self.nixosModules.base-nix-settings
-        self.nixosModules.base-auto-update
+        self.nixosModules.base-networking
       ]
       ++ francynoxModulesList;
 

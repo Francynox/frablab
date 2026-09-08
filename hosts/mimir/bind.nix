@@ -107,7 +107,7 @@ in
     };
   };
 
-  frablab.base.persistence.directories = [
+  frablab.homelab.persistence.directories = [
     "${cfg.dataDir}"
   ];
 

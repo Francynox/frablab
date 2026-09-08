@@ -8,7 +8,6 @@
       ...
     }:
     let
-      cfg-persistence = config.frablab.base.persistence;
       cfg-base = config.frablab.base.users;
       cfg = cfg-base.admin;
     in
@@ -30,18 +29,6 @@
           type = lib.types.listOf lib.types.str;
           default = [ ];
           description = "Extra groups for admin user";
-        };
-
-        persistenceFiles = lib.mkOption {
-          type = lib.types.listOf lib.types.str;
-          default = [ ];
-          description = "Files to persist for the user";
-        };
-
-        persistenceDirectories = lib.mkOption {
-          type = lib.types.listOf lib.types.str;
-          default = [ ];
-          description = "Directories to persist for the user";
         };
 
         exportDeploySshKey = lib.mkOption {
@@ -86,26 +73,6 @@
             ];
           }
         ];
-
-        environment.persistence = lib.mkIf cfg-persistence.enable {
-          "${cfg-persistence.path}" = {
-            users.admin = {
-              directories = [
-                {
-                  directory = ".ssh";
-                  mode = "0700";
-                }
-                ".config"
-                ".local/share"
-              ]
-              ++ cfg.persistenceDirectories;
-              files = [
-                ".bash_history"
-              ]
-              ++ cfg.persistenceFiles;
-            };
-          };
-        };
       };
     };
 }

@@ -3,16 +3,9 @@
     { config, lib, ... }:
     let
       cfg-base = config.frablab.base;
-      cfg = cfg-base.nix-settings;
     in
     {
-      options.frablab.base.nix-settings.enable = lib.mkOption {
-        type = lib.types.bool;
-        default = cfg-base.enable;
-        description = "Enable Nix settings (flakes, gc, etc)";
-      };
-
-      config = lib.mkIf cfg.enable {
+      config = lib.mkIf cfg-base.enable {
         nix = {
           gc = {
             automatic = true;
