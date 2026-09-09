@@ -7,17 +7,12 @@
     git-filter-repo
     treefmt
     uv
-    nodejs_24
     xauth
     xclock
     xeyes
     ucode
     just-lsp
   ];
-
-  environment.sessionVariables = {
-    NPM_CONFIG_PREFIX = "$HOME/.npm-global";
-  };
 
   programs.bash.interactiveShellInit = ''
     auth-sops() {
@@ -27,7 +22,6 @@
         echo "Error: Host key not found."
       fi
     }
-    export PATH="$HOME/.npm-global/bin:$PATH"
   '';
 
   programs = {

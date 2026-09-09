@@ -28,7 +28,6 @@
             ".antigravity-server"
             ".antigravity-ide-server"
             ".gemini"
-            ".npm-global"
           ];
           files = [
             ".gitconfig"
