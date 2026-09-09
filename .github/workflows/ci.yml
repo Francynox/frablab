@@ -1,18 +1,14 @@
 name: CI
-
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
-
 permissions:
   contents: read
-
 concurrency:
   cancel-in-progress: true
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-
 jobs:
   flake-check:
     runs-on: ubuntu-latest
@@ -20,17 +16,14 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-
       - name: Setup Nix
         uses: ./.github/actions/setup-nix
         with:
           app-client-id: ${{ vars.APP_CLIENT_ID }}
           app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
           cachix-cache: francynox
-
       - name: Run flake check
         run: nix flake check --print-build-logs
-
   list-hosts:
     runs-on: ubuntu-latest
     outputs:
@@ -39,13 +32,11 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-
       - name: Setup Nix
         uses: ./.github/actions/setup-nix
         with:
           app-client-id: ${{ vars.APP_CLIENT_ID }}
           app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
-
       - name: Discover NixOS configurations
         id: set-matrix
         run: |
@@ -53,7 +44,6 @@ jobs:
           HOSTS_JSON=$(nix flake show --json . | jq -c '[.nixosConfigurations | keys[]]')
           echo "Found hosts: $HOSTS_JSON"
           echo "hosts=$HOSTS_JSON" >> "$GITHUB_OUTPUT"
-
   build-hosts:
     runs-on: ubuntu-latest
     needs: [flake-check, list-hosts]
@@ -66,19 +56,16 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-
       - name: Setup Nix
         uses: ./.github/actions/setup-nix
         with:
           app-client-id: ${{ vars.APP_CLIENT_ID }}
           app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
           cachix-cache: francynox
-
       - name: Build ${{ matrix.host }}
         env:
           HOST: ${{ matrix.host }}
         run: nix build .#nixosConfigurations."$HOST".config.system.build.toplevel --print-build-logs
-
   ci-success:
     name: "CI Success"
     runs-on: ubuntu-latest

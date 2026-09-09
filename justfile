@@ -13,14 +13,14 @@ set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
 [no-exit-message]
 deploy machine ip="":
     #!/usr/bin/env bash
-    if [ -z "{{ip}}" ]; then
-        echo "🚀 Deploying to {{machine}} (local)..."
-        sudo nixos-rebuild switch --no-reexec --flake ".#{{machine}}"
+    if [ -z "{{ ip }}" ]; then
+        echo "🚀 Deploying to {{ machine }} (local)..."
+        sudo nixos-rebuild switch --no-reexec --flake ".#{{ machine }}"
     else
-        echo "🚀 Deploying to {{machine}} at {{ip}}..."
-        nixos-rebuild switch --no-reexec --flake ".#{{machine}}" \
+        echo "🚀 Deploying to {{ machine }} at {{ ip }}..."
+        nixos-rebuild switch --no-reexec --flake ".#{{ machine }}" \
             --sudo \
-            --target-host "deploy@{{ip}}"
+            --target-host "deploy@{{ ip }}"
     fi
 
 # Update flake.lock
@@ -63,10 +63,10 @@ repair ip="":
     echo "⚠️  WARNING: This will verify and repair the nix store."
     read -p "Are you sure? [y/N] " -n 1 -r; echo
     [[ $REPLY =~ ^[Yy]$ ]] || exit 1
-    if [ -z "{{ip}}" ]; then
+    if [ -z "{{ ip }}" ]; then
         sudo nix-store --verify --check-contents --repair
     else
-        ssh -t deploy@{{ip}} "sudo nix-store --verify --check-contents --repair"
+        ssh -t deploy@{{ ip }} "sudo nix-store --verify --check-contents --repair"
     fi
 
 #-------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ repair ip="":
 
 # Edit secrets file
 sopsedit file="secrets/secrets.yaml":
-    sops {{file}}
+    sops {{ file }}
 
 # Rotate keys for all secrets
 sopsrotate:

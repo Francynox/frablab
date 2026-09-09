@@ -1,6 +1,5 @@
 name: Setup Nix
 description: Generate GitHub App token for frablab-config, install Nix, and optionally configure Cachix
-
 inputs:
   app-client-id:
     description: GitHub App Client ID
@@ -12,12 +11,10 @@ inputs:
     description: Cachix cache name
     required: false
     default: ""
-
 outputs:
   token:
     description: GitHub App Token for frablab-config
     value: ${{ steps.generate-token-frablab-config.outputs.token }}
-
 runs:
   using: composite
   steps:
@@ -30,17 +27,14 @@ runs:
         repositories: "frablab-config"
         permission-contents: "read"
         permission-metadata: "read"
-
     - name: Install Nix
       uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31
       with:
         extra_nix_config: |
           experimental-features = nix-command flakes
           access-tokens = github.com=${{ steps.generate-token-frablab-config.outputs.token }}
-
     - name: Setup Cachix
       if: ${{ inputs.cachix-cache != '' }}
       uses: cachix/cachix-action@38b082610b782e7e93e209c35fd730d399dee866 # v17
       with:
         name: ${{ inputs.cachix-cache }}
-
