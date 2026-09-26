@@ -39,13 +39,19 @@
       };
 
       config = lib.mkIf cfg.enable {
-        sops.secrets.admin-deploy-ssh-key = lib.mkIf cfg.exportDeploySshKey {
-          sopsFile = self + "/secrets/deploy-ssh-key";
-          format = "binary";
-          path = "/home/admin/.ssh/deploy-ssh-key";
-          owner = "admin";
-          group = "admin";
-          mode = "0600";
+        sops.secrets = {
+          admin-deploy-ssh-key = lib.mkIf cfg.exportDeploySshKey {
+            sopsFile = self + "/secrets/deploy-ssh-key";
+            format = "binary";
+            path = "/home/admin/.ssh/deploy-ssh-key";
+            owner = "admin";
+            group = "admin";
+          };
+          admin-password = {
+            owner = "admin";
+            group = "admin";
+            neededForUsers = true;
+          };
         };
 
         users.groups.admin = { };
@@ -59,7 +65,7 @@
           ]
           ++ cfg.extraGroups;
           openssh.authorizedKeys.keys = constants.adminSshAuthorizedKeys;
-          initialHashedPassword = lib.mkDefault constants.adminInitialHashedPassword;
+          hashedPasswordFile = config.sops.secrets.admin-password.path;
         };
 
         security.sudo.extraRules = lib.mkIf cfg.passwordlessSudo [
