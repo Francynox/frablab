@@ -14,23 +14,12 @@ in
     let
       francynoxModulesList = lib.attrValues inputs.nur-francynox.nixosModules;
 
-      pkgsUnstable = import inputs.nixpkgs-unstable {
-        inherit system;
-        config.allowUnfree = true;
-      };
-      pkgsStable = import inputs.nixpkgs-stable {
-        inherit system;
-        config.allowUnfree = true;
-      };
-
       inherit (topConfig) constants;
 
       commonArgs = {
         inherit
           francynoxModulesList
           inputs
-          pkgsUnstable
-          pkgsStable
           constants
           ;
         inherit (inputs) self;
