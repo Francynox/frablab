@@ -37,5 +37,6 @@ in
     nixos-dev = mkHost "nixos-dev" "kvm";
     bifrost = mkHost "bifrost" "lxc";
     mimir = mkHost "mimir" "lxc";
+    sparkyfitness = mkHost "sparkyfitness" "lxc";
   };
 }

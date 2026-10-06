@@ -188,11 +188,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1790894796,
-        "narHash": "sha256-XzRfTTgL3yV5kRaXobSWINPpkl4d4LHQWEj8ZzGnfkk=",
+        "lastModified": 1791322183,
+        "narHash": "sha256-u2DdJ4QYsloSmC4uirJuxR8HV6VP04U2Nzc5iNIrRkc=",
         "owner": "francynox",
         "repo": "frablab-config",
-        "rev": "e35bc55af9e8dd4999a0923975dff3ac7cb1bdd6",
+        "rev": "c28753c1236821b01dd4f7c0429067a422142ea6",
         "type": "github"
       },
       "original": {
@@ -423,11 +423,11 @@
         "treefmt-nix": "treefmt-nix_2"
       },
       "locked": {
-        "lastModified": 1791235871,
-        "narHash": "sha256-UM6IJtN9muWuZHJ2PI5gB9LKUNqc7YpnQW62CrIFVtU=",
+        "lastModified": 1791323407,
+        "narHash": "sha256-EWya8icVAv8uwtgfyASSF8JG7+Ip98XoLg4uakjEC38=",
         "owner": "francynox",
         "repo": "nur-repository",
-        "rev": "de90ee48e07dd6357238c0ddaaecc1cbf9883697",
+        "rev": "a2a508c5a277240429423540a932c8738a750162",
         "type": "github"
       },
       "original": {
