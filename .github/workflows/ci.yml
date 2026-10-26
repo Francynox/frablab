@@ -17,10 +17,8 @@ jobs:
         with:
           persist-credentials: false
       - name: Setup Nix
-        uses: ./.github/actions/setup-nix
+        uses: $/.github/actions/setup-nix
         with:
-          app-client-id: ${{ vars.APP_CLIENT_ID }}
-          app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
           cachix-cache: francynox
       - name: Run flake check
         run: nix flake check --print-build-logs
@@ -33,15 +31,12 @@ jobs:
         with:
           persist-credentials: false
       - name: Setup Nix
-        uses: ./.github/actions/setup-nix
-        with:
-          app-client-id: ${{ vars.APP_CLIENT_ID }}
-          app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
+        uses: $/.github/actions/setup-nix
       - name: Discover NixOS configurations
         id: set-matrix
         run: |
           set -euo pipefail
-          HOSTS_JSON=$(nix flake show --json . | jq -c '[.nixosConfigurations | keys[]]')
+          HOSTS_JSON=$(nix eval --json .#lib.hosts | jq -c 'keys')
           echo "Found hosts: $HOSTS_JSON"
           echo "hosts=$HOSTS_JSON" >> "$GITHUB_OUTPUT"
   build-hosts:
@@ -57,10 +52,8 @@ jobs:
         with:
           persist-credentials: false
       - name: Setup Nix
-        uses: ./.github/actions/setup-nix
+        uses: $/.github/actions/setup-nix
         with:
-          app-client-id: ${{ vars.APP_CLIENT_ID }}
-          app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
           cachix-cache: francynox
       - name: Build ${{ matrix.host }}
         env:

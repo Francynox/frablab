@@ -10,6 +10,8 @@ from pathlib import Path
 # Regex patterns
 MODULE_RE = re.compile(r"flake\.nixosModules\.([\w-]+)\s*=")
 OPTION_RE = re.compile(r"options\.frablab\.([\w.-]+)\s*=")
+PERSYSTEM_RE = re.compile(r"(?<![\w.])perSystem\s*=")
+FLAKE_PASSTHROUGH_RE = re.compile(r"flake\.(flakeModules|lib)\b")
 
 
 def main():
@@ -82,6 +84,14 @@ def main():
             if not is_valid:
                 file_violations.append(
                     f"Option: found 'options.frablab.{found}', expected prefix 'options.frablab.{exp_opt}'"
+                )
+
+        if not MODULE_RE.search(content):
+            if not PERSYSTEM_RE.search(content) and not FLAKE_PASSTHROUGH_RE.search(
+                content
+            ):
+                file_violations.append(
+                    f"Outputs: no 'flake.nixosModules.{exp_mod}' and no perSystem/flake outputs"
                 )
 
         # --- Print Results for File ---

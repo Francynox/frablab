@@ -3,6 +3,11 @@ let
   topConfig = config;
 in
 {
+  imports = [
+    inputs.treefmt-nix.flakeModule
+    inputs.git-hooks.flakeModule
+  ];
+
   perSystem =
     {
       config,
@@ -12,18 +17,14 @@ in
       ...
     }:
     let
-      francynoxModulesList = lib.attrValues inputs.nur-francynox.nixosModules;
-
       inherit (topConfig) constants;
 
       commonArgs = {
         inherit
-          francynoxModulesList
           inputs
           constants
           ;
         inherit (inputs) self;
-        frablabConfig = inputs.frablab-config.lib;
       };
     in
     {
@@ -51,15 +52,17 @@ in
 
       pre-commit = {
         check.enable = true;
-        settings.hooks.treefmt.enable = true;
-        settings.hooks.zizmor.enable = true;
-        settings.hooks.actionlint.enable = true;
-        settings.hooks.nix-flake-check = {
-          enable = true;
-          name = "nix-flake-check";
-          entry = "bash -c 'if command -v nix >/dev/null; then nix flake check; else echo \"Skipping nix flake check in sandbox\"; fi'";
-          language = "system";
-          pass_filenames = false;
+        settings.hooks = {
+          treefmt.enable = true;
+          zizmor.enable = true;
+          actionlint.enable = true;
+          nix-flake-check = {
+            enable = true;
+            name = "nix-flake-check";
+            entry = "bash -c 'if command -v nix >/dev/null; then nix flake check; else echo \"Skipping nix flake check in sandbox\"; fi'";
+            language = "system";
+            pass_filenames = false;
+          };
         };
       };
 
@@ -74,6 +77,24 @@ in
               python3 $src/scripts/check_conventions.py $src/parts
               mkdir $out
             '';
+
+        # Unit tests for the pure network lib and schema validation.
+        unit-lib =
+          let
+            failures = import ./lib/tests/lib-test.nix {
+              inherit lib;
+              inherit (inputs) dns;
+            };
+          in
+          assert lib.assertMsg (failures == [ ]) "Lib unit tests failed: ${builtins.toJSON failures}";
+          pkgs.runCommand "check-unit-lib" { } "mkdir $out";
+
+        unit-schema =
+          let
+            failures = import ./lib/tests/schema-test.nix { inherit lib; };
+          in
+          assert lib.assertMsg (failures == [ ]) "Schema unit tests failed: ${builtins.toJSON failures}";
+          pkgs.runCommand "check-unit-schema" { } "mkdir $out";
       };
 
       devShells.default = pkgs.mkShell {
@@ -89,7 +110,6 @@ in
           pkgs.git
           pkgs.age
           pkgs.nix
-          pkgs.home-manager
           pkgs.nvd
           pkgs.nix-output-monitor
           pkgs.python3
@@ -101,6 +121,5 @@ in
           pkgs.actionlint
         ];
       };
-
     };
 }

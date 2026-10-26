@@ -17,12 +17,6 @@
       ];
 
       options.frablab.vm = {
-        enable = lib.mkOption {
-          type = lib.types.bool;
-          default = true;
-          description = "Enable VM hardware and disk configuration";
-        };
-
         device = lib.mkOption {
           type = lib.types.str;
           default = "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi0";
@@ -42,7 +36,7 @@
         };
       };
 
-      config = lib.mkIf cfg.enable {
+      config = {
         services.qemuGuest.enable = true;
 
         boot = {

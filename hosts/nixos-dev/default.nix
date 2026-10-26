@@ -16,7 +16,6 @@
 
   frablab.base = {
     users = {
-      enable = true;
       admin = {
         extraGroups = [ "docker" ];
         exportDeploySshKey = true;

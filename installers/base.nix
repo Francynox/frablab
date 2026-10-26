@@ -2,10 +2,6 @@
 {
   imports = [ self.nixosModules.base ];
 
-  frablab.base = {
-    enable = true;
-  };
-
   services.francynox = {
     deploy-user.autologin = true;
   };

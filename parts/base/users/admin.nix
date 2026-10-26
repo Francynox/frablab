@@ -3,22 +3,15 @@
     {
       config,
       lib,
-      self,
       constants,
+      self,
       ...
     }:
     let
-      cfg-base = config.frablab.base.users;
-      cfg = cfg-base.admin;
+      cfg = config.frablab.base.users.admin;
     in
     {
       options.frablab.base.users.admin = {
-        enable = lib.mkOption {
-          type = lib.types.bool;
-          default = cfg-base.enable;
-          description = "Enable admin user";
-        };
-
         passwordlessSudo = lib.mkOption {
           type = lib.types.bool;
           default = false;
@@ -38,7 +31,7 @@
         };
       };
 
-      config = lib.mkIf cfg.enable {
+      config = {
         sops.secrets = {
           admin-deploy-ssh-key = lib.mkIf cfg.exportDeploySshKey {
             sopsFile = self + "/secrets/deploy-ssh-key";

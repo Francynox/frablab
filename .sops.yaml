@@ -4,14 +4,30 @@ keys:
   - &mimir age1dhcmx4fw7ugljkcsxlk5ksns8j343g6608tsj7e6a8e2z4lp9ews6ldegl
   - &sparkyfitness age10w9jhpggpg5tlk5jvkux9ta7r6ce5h2kue73n302afpk7fr45ens4hupdd
 creation_rules:
-  - path_regex: secrets/secrets.yaml
+  - path_regex: hosts/bifrost/.*$
+    encrypted_regex: 'private_key|password'
+    key_groups:
+      - age:
+          - *nixos-dev
+          - *bifrost
+  - path_regex: hosts/mimir/.*$
+    key_groups:
+      - age:
+          - *nixos-dev
+          - *mimir
+  - path_regex: hosts/sparkyfitness/.*$
+    key_groups:
+      - age:
+          - *nixos-dev
+          - *sparkyfitness
+  - path_regex: secrets/secrets\.yaml$
     key_groups:
       - age:
           - *nixos-dev
           - *bifrost
           - *mimir
           - *sparkyfitness
-  - path_regex: secrets/deploy-ssh-key
+  - path_regex: secrets/deploy-ssh-key$
     key_groups:
       - age:
           - *nixos-dev

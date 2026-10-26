@@ -1,6 +1,5 @@
-{ frablabConfig, ... }:
 let
-  unboundConfig = frablabConfig.unbound;
+  unboundConfig = ./unbound.conf;
   unboundConfigEtcPath = "unbound/unbound.conf";
 in
 {

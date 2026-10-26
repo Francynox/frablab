@@ -2,7 +2,6 @@
   flake.nixosModules.homelab =
     {
       self,
-      lib,
       inputs,
       ...
     }:
@@ -15,13 +14,5 @@
         self.nixosModules.homelab-firewall
         self.nixosModules.homelab-network
       ];
-
-      options.frablab.homelab = {
-        enable = lib.mkOption {
-          type = lib.types.bool;
-          default = true;
-          description = "Enable frablab homelab cluster configuration";
-        };
-      };
     };
 }

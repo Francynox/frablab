@@ -8,31 +8,32 @@
   perSystem =
     {
       pkgs,
-      system,
       ...
     }:
     let
       inherit (config) constants;
+
+      hosts = inputs.self.lib.hosts;
+      namesOf = type: lib.attrNames (lib.filterAttrs (_: t: t == type) hosts);
+      lxcHosts = builtins.concatStringsSep "\n" (namesOf "lxc");
+      kvmHosts = builtins.concatStringsSep "\n" (namesOf "kvm");
       install-script = pkgs.writeShellApplication {
-        name = "install-check";
+        name = "install";
         runtimeInputs = [
           pkgs.gum
           pkgs.ssh-to-age
           pkgs.nixos-install-tools
           pkgs.systemd
-          pkgs.curl
-          pkgs.sops
         ];
         text = ''
           DEFAULT_KEY_PATH="${constants.sopsKeyPath}"
-          SECRETS_URL="${constants.remoteSecretsUrl}"
 
           if (( EUID != 0 )); then
              gum log -sl info "This script requires root privileges. Elevating..."
              exec sudo "$0" "$@"
           fi
 
-          LOG_FILE="/tmp/install-check.log"
+          LOG_FILE="/tmp/install.log"
           echo "--- FraBLaB Install Log ---" > "$LOG_FILE"
 
           log() {
@@ -51,25 +52,9 @@
           ENVIRONMENT="$(systemd-detect-virt)"
           log info "Environment detected: $ENVIRONMENT"
 
-          LXC_HOSTS="${
-            builtins.concatStringsSep "\n" (
-              lib.attrNames (
-                lib.filterAttrs (
-                  _: c: c.config.boot.isContainer && c.config.nixpkgs.system == system
-                ) inputs.self.nixosConfigurations
-              )
-            )
-          }"
+          LXC_HOSTS="${lxcHosts}"
 
-          KVM_HOSTS="${
-            builtins.concatStringsSep "\n" (
-              lib.attrNames (
-                lib.filterAttrs (
-                  _: c: !c.config.boot.isContainer && c.config.nixpkgs.system == system
-                ) inputs.self.nixosConfigurations
-              )
-            )
-          }"
+          KVM_HOSTS="${kvmHosts}"
 
           if [[ "$ENVIRONMENT" == "kvm" ]]; then
             AVAILABLE_HOSTS="$KVM_HOSTS"
@@ -128,23 +113,6 @@
           log info "Summary: Configure '$HOST' from '$FLAKE_URI' on current system ($ENVIRONMENT)"
 
           if gum confirm "Ready to apply configuration?"; then
-              log info "Fetching private repository access token..."
-
-              if ! curl -sS -f -o /tmp/secrets.yaml "$SECRETS_URL"; then
-                  log error "Failed to download secrets.yaml from GitHub."
-                  exit 1
-              fi
-
-              AGE_PRIV_KEY=$(cat "$KEY_PATH" | ssh-to-age -private-key)
-
-              if ! PAT=$(SOPS_AGE_KEY="$AGE_PRIV_KEY" sops -d --extract '["github-pat"]' /tmp/secrets.yaml); then
-                  log error "Failed to decrypt GitHub PAT. Did you re-encrypt the file with the new age key?"
-                  exit 1
-              fi
-
-              echo "access-tokens = github.com=$PAT" > /tmp/nix-private-access.conf
-              export NIX_USER_CONF_FILES="/tmp/nix-private-access.conf"
-
               log info "Rebuilding NixOS..."
               nixos-rebuild switch --flake "$FLAKE_URI#$HOST" 2>&1 | tee -a "$LOG_FILE"
           else
@@ -164,7 +132,7 @@
 
       apps.install = {
         type = "app";
-        program = "${install-script}/bin/install-check";
+        program = "${install-script}/bin/install";
         meta.description = "Install NixOS";
       };
     };

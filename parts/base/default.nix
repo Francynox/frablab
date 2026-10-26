@@ -1,9 +1,9 @@
+{ inputs, ... }:
 {
   flake.nixosModules.base =
     {
       self,
       lib,
-      francynoxModulesList,
       ...
     }:
     {
@@ -15,14 +15,6 @@
         self.nixosModules.base-nix-settings
         self.nixosModules.base-networking
       ]
-      ++ francynoxModulesList;
-
-      options.frablab.base = {
-        enable = lib.mkOption {
-          type = lib.types.bool;
-          default = true;
-          description = "Enable frablab base configuration";
-        };
-      };
+      ++ lib.attrValues inputs.nur-francynox.nixosModules;
     };
 }

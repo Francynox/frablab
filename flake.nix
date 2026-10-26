@@ -40,6 +40,11 @@
 
     import-tree.url = "github:vic/import-tree";
 
+    dns = {
+      url = "github:nix-community/dns.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     git-hooks = {
       url = "github:cachix/git-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -49,18 +54,11 @@
       url = "github:francynox/nur-repository";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    frablab-config = {
-      url = "github:francynox/frablab-config";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
     inputs@{
       flake-parts,
-      treefmt-nix,
-      git-hooks,
       ...
     }:
     flake-parts.lib.mkFlake { inherit inputs; } (
@@ -69,13 +67,12 @@
         systems = [ "x86_64-linux" ];
 
         imports = [
-          treefmt-nix.flakeModule
-          git-hooks.flakeModule
           ./per-system.nix
           (inputs.import-tree ./parts)
           ./constants
           ./hosts
           ./installers
+          ./lib
         ];
       }
     );

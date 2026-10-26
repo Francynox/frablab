@@ -9,5 +9,5 @@ in
     description = "Project-wide shared constants internal to the flake module system.";
   };
 
-  config.constants = constants;
+  config.constants = lib.mkDefault constants;
 }

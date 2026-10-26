@@ -3,8 +3,8 @@
   networking.hostName = "mimir";
 
   imports = [
-    ./bind.nix
-    ./kea.nix
+    ./bind
+    ./kea
   ];
 
   frablab.homelab.network = {

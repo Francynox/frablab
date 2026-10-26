@@ -2,7 +2,7 @@
   pkgs,
   lib,
   config,
-  frablabConfig,
+  inputs,
   ...
 }:
 let
@@ -14,26 +14,34 @@ let
 
   writeZone = name: content: pkgs.writeText name content;
 
+  dnsZonesLib = inputs.self.lib.network.mkDnsZones {
+    network = config.frablab.network;
+    serial = inputs.self.sourceInfo.lastModified or inputs.self.lastModified;
+  };
+
+  bindLib = inputs.self.lib.network.mkBind {
+    network = config.frablab.network;
+  };
+
   dnsZones = {
-    staticZoneFiles = builtins.mapAttrs writeZone frablabConfig.dnsZones.staticZoneFiles;
-    dynamicZoneFiles = builtins.mapAttrs writeZone frablabConfig.dnsZones.dynamicZoneFiles;
+    staticZoneFiles = builtins.mapAttrs writeZone dnsZonesLib.staticZoneFiles;
+    dynamicZoneFiles = builtins.mapAttrs writeZone dnsZonesLib.dynamicZoneFiles;
   };
 
   bind = {
     namedConf = pkgs.writeText "named.conf" (
-      frablabConfig.bind.namedConf {
+      bindLib.namedConf {
         inherit (cfg) dataDir;
         dhcpKeyFile = "${dhcpKeyFile}";
       }
     );
-    nsupdateScript = pkgs.writeText "nsupdate-static-reverse.txt" frablabConfig.bind.nsupdateScriptContent;
-    inherit (frablabConfig.bind) rndcKey dhcpKey;
+    nsupdateScript = pkgs.writeText "nsupdate-static-reverse.txt" bindLib.nsupdateScriptContent;
   };
 in
 {
   sops.secrets = {
     bind-rndc-key = {
-      sopsFile = bind.rndcKey;
+      sopsFile = ./bind-rndc.key;
       path = cfg.rndcKeyFile;
       format = "binary";
       mode = "0600";
@@ -42,7 +50,7 @@ in
       restartUnits = [ "named.service" ];
     };
     bind-dhcp-key = {
-      sopsFile = bind.dhcpKey;
+      sopsFile = ./bind-dhcp-ddns.key;
       path = dhcpKeyFile;
       format = "binary";
       mode = "0600";
@@ -117,7 +125,6 @@ in
     firewall = {
       allowedTCPPorts = [
         53
-        443
       ];
       allowedUDPPorts = [
         53

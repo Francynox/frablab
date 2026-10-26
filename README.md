@@ -5,7 +5,6 @@ Nix configurations for my homelab.
 ## Highlights
 
 - ❄️ **Nix Flakes**: Handles dependencies and tracks strictly versioned packages.
-- 🏠 **Home Manager**: Manages user environments and dotfiles.
 - 🤫 **sops-nix**: Manages secrets securely.
 - 🌬️ **Impermanence**: Root on tmpfs (opt-in per host).
 - 🧱 **Modular Architecture**: Components are reusable and maintainable.
@@ -17,6 +16,7 @@ This repository contains configurations for the following hosts:
 - **`nixos-dev`**: Development machine (KVM).
 - **`bifrost`**: Core network services host running AdGuard Home and Unbound (LXC).
 - **`mimir`**: Infrastructure host running Bind and Kea DHCP (LXC).
+- **`sparkyfitness`**: Fitness tracking application (LXC).
 
 ## Getting Started
 
@@ -24,7 +24,7 @@ This project uses `just` as a command runner. Install `just` to use the convenie
 
 ### Deployment
 
-Deploy to a local or remote machine:
+Deploy directly from this repository:
 
 ```bash
 # Deploy to the 'nixos-dev' host (local)

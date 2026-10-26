@@ -1,17 +1,12 @@
-{
-  config,
-  frablabConfig,
-  ...
-}:
+{ config, ... }:
 let
   cfg = config.services.francynox.adguardhome;
-  adguardHomeConfig = frablabConfig.adguardhome;
   adguardHomeConfigEtcPath = "adguardhome/AdGuardHome.yaml";
 in
 {
   sops.secrets = {
     adguardhome-config = {
-      sopsFile = adguardHomeConfig;
+      sopsFile = ./AdGuardHome.yaml;
       path = "/etc/${adguardHomeConfigEtcPath}";
       key = "";
       mode = "0600";

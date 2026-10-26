@@ -77,10 +77,34 @@ repair ip="":
 sopsedit file="secrets/secrets.yaml":
     sops {{ file }}
 
-# Rotate keys for all secrets
-sopsrotate:
-    for file in secrets/*; do sops --rotate --in-place "$file"; done
+# Decrypt a file in-place
+sopsdecrypt file:
+    sops --decrypt --in-place "{{ file }}"
 
-# Update keys for all secrets
+# Encrypt a file in-place
+sopsencrypt file:
+    sops --encrypt --in-place "{{ file }}"
+
+# Rotate keys for all secrets (skips non-sops files)
+sopsrotate:
+    #!/usr/bin/env bash
+    for dir in secrets hosts; do
+        [ -d "$dir" ] || continue
+        find "$dir" -type f | while read -r file; do
+            if grep -q -E '"sops":|^sops:' "$file" 2>/dev/null; then
+                sops --rotate --in-place "$file"
+            fi
+        done
+    done
+
+# Update keys for all secrets (skips non-sops files)
 sopsupdate:
-    for file in secrets/*; do sops updatekeys "$file"; done
+    #!/usr/bin/env bash
+    for dir in secrets hosts; do
+        [ -d "$dir" ] || continue
+        find "$dir" -type f | while read -r file; do
+            if grep -q -E '"sops":|^sops:' "$file" 2>/dev/null; then
+                sops updatekeys "$file"
+            fi
+        done
+    done

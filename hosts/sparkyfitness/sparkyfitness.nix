@@ -1,12 +1,14 @@
-{ config, frablabConfig, ... }:
+{
+  config,
+  ...
+}:
 let
   cfg = config.services.francynox.sparkyfitness;
-  sopsFile = frablabConfig.sparkyfitness.envFile;
 in
 {
   sops.secrets = {
     "sparkyfitness/db-password" = {
-      inherit sopsFile;
+      sopsFile = ./sparkyfitness.yaml;
       key = "db-password";
       restartUnits = [
         "sparkyfitness-db-init.service"
@@ -14,17 +16,17 @@ in
       ];
     };
     "sparkyfitness/app-db-password" = {
-      inherit sopsFile;
+      sopsFile = ./sparkyfitness.yaml;
       key = "app-db-password";
       restartUnits = [ "sparkyfitness.service" ];
     };
     "sparkyfitness/api-encryption-key" = {
-      inherit sopsFile;
+      sopsFile = ./sparkyfitness.yaml;
       key = "api-encryption-key";
       restartUnits = [ "sparkyfitness.service" ];
     };
     "sparkyfitness/auth-secret" = {
-      inherit sopsFile;
+      sopsFile = ./sparkyfitness.yaml;
       key = "auth-secret";
       restartUnits = [ "sparkyfitness.service" ];
     };
@@ -45,7 +47,7 @@ in
 
   services.francynox.sparkyfitness = {
     enable = true;
-    frontendUrl = "https://sparkyfitness.service.home.arpa";
+    frontendUrl = "https://${config.networking.hostName}.${config.frablab.homelab.network.subnet}.${config.frablab.network.domain}";
     environmentFile = config.sops.templates."sparkyfitness.env".path;
   };
 

@@ -8,8 +8,6 @@
       ...
     }:
     let
-      cfg-homelab = config.frablab.homelab;
-      cfg = cfg-homelab.auto-update;
       auCfg = config.services.francynox.auto-update;
       pushServerCfg = auCfg.push-server;
       webhook = config.services.webhook;
@@ -32,36 +30,28 @@
           owner = webhook.user;
           inherit (webhook) group;
         };
-
-        github-pat-webhook = {
-          key = "github-pat";
-          owner = webhook.user;
-          inherit (webhook) group;
-        };
       };
     in
     {
       options.frablab.homelab.auto-update = {
-        enable = lib.mkOption {
-          type = lib.types.bool;
-          default = cfg-homelab.enable;
-          description = "Enable homelab auto-update configuration";
+        pushWebhookUrl = lib.mkOption {
+          type = lib.types.str;
+          default = "http://${config.frablab.network.hosts.mgmt.nixos-dev.fqdn}:${toString pushServerCfg.port}/hooks/deploy";
+          description = "Webhook URL the push client notifies. Defaults to this cluster's push-server (nixos-dev).";
         };
       };
 
-      config = lib.mkIf cfg.enable {
+      config = {
         services.francynox.auto-update = {
           enable = lib.mkDefault true;
 
           pull = {
             inherit (constants) flakeUrl;
-            secretsUrl = constants.remoteSecretsUrl;
-            inherit (constants) sopsKeyPath;
           };
 
           push = {
             webhook = {
-              url = lib.mkDefault "http://${config.frablab.network.hosts.mgmt.nixos-dev.fqdn}:${toString pushServerCfg.port}/hooks/deploy";
+              url = lib.mkDefault config.frablab.homelab.auto-update.pushWebhookUrl;
               tokenFile = config.sops.secrets.deploy-token.path;
             };
           };
@@ -71,7 +61,6 @@
             targetUser = config.services.francynox.deploy-user.name;
             tokenFile = config.sops.secrets.deploy-token.path;
             sshKeyFile = config.sops.secrets.deploy-ssh-key.path;
-            githubPatFile = config.sops.secrets.github-pat-webhook.path;
           };
         };
 

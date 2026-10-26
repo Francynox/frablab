@@ -1,11 +1,9 @@
 { inputs, withSystem, ... }:
 let
+  hosts = inputs.self.lib.hosts;
+
   mkHost =
     name: type:
-    assert builtins.elem type [
-      "kvm"
-      "lxc"
-    ];
     withSystem "x86_64-linux" (
       {
         pkgs,
@@ -23,20 +21,14 @@ let
           inputs.self.nixosModules.homelab
           ./${name}
         ]
-        ++ inputs.nixpkgs.lib.optionals (type == "lxc") [
-          inputs.self.nixosModules.lxc
-        ]
-        ++ inputs.nixpkgs.lib.optionals (type == "kvm") [
-          inputs.self.nixosModules.vm
-        ];
+        ++ {
+          lxc = [ inputs.self.nixosModules.lxc ];
+          kvm = [ inputs.self.nixosModules.vm ];
+        }
+        .${type};
       }
     );
 in
 {
-  flake.nixosConfigurations = {
-    nixos-dev = mkHost "nixos-dev" "kvm";
-    bifrost = mkHost "bifrost" "lxc";
-    mimir = mkHost "mimir" "lxc";
-    sparkyfitness = mkHost "sparkyfitness" "lxc";
-  };
+  flake.nixosConfigurations = inputs.nixpkgs.lib.mapAttrs (name: type: mkHost name type) hosts;
 }

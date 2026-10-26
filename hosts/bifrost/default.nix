@@ -3,8 +3,8 @@
   networking.hostName = "bifrost";
 
   imports = [
-    ./adguardhome.nix
-    ./unbound.nix
+    ./adguardhome
+    ./unbound
   ];
 
   frablab.homelab.network = {

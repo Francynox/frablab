@@ -2,19 +2,12 @@
   flake.nixosModules.homelab-persistence =
     { config, lib, ... }:
     let
-      cfg-homelab = config.frablab.homelab;
-      cfg = cfg-homelab.persistence;
+      cfg = config.frablab.homelab.persistence;
       adminCfg = config.frablab.base.users.admin;
     in
     {
       options = {
         frablab.homelab.persistence = {
-          enable = lib.mkOption {
-            type = lib.types.bool;
-            default = cfg-homelab.enable;
-            description = "Enable homelab persistence configuration";
-          };
-
           path = lib.mkOption {
             type = lib.types.str;
             default = "/nix/persist";
@@ -49,7 +42,7 @@
         };
       };
 
-      config = lib.mkIf cfg.enable {
+      config = {
         environment.persistence."${cfg.path}" = {
           hideMounts = true;
 
@@ -70,7 +63,7 @@
           ]
           ++ cfg.files;
 
-          users.admin = lib.mkIf adminCfg.enable {
+          users.admin = {
             directories = [
               {
                 directory = ".ssh";

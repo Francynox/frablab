@@ -1,0 +1,256 @@
+http:
+  pprof:
+    port: 6060
+    enabled: false
+  doh:
+    routes:
+      - GET /dns-query
+      - POST /dns-query
+      - GET /dns-query/{ClientID}
+      - POST /dns-query/{ClientID}
+    insecure_enabled: false
+  address: 0.0.0.0:80
+  session_ttl: 30d
+users:
+  - name: admin
+    password: ENC[AES256_GCM,data:ca2LMKYwLdEFl4VnrRQYYWVKzJ+sEIySzHtGkLf37wOlxq8f9WOx/qZN45V/gga0bRRsNNvn0J94Hn05,iv:0m0rCnkXJ/P14j7NhvMuoKedrfP9oRGiKYkYZqLIPzc=,tag:+PIcZ/iMvHvEQl80phadzw==,type:str]
+auth_attempts: 5
+block_auth_min: 15
+http_proxy: ""
+language: it
+theme: auto
+dns:
+  bind_hosts:
+    - 0.0.0.0
+  port: 53
+  anonymize_client_ip: false
+  ratelimit: 20
+  ratelimit_subnet_len_ipv4: 24
+  ratelimit_subnet_len_ipv6: 56
+  ratelimit_whitelist: []
+  refuse_any: true
+  upstream_dns:
+    - 127.0.0.1:5335
+    - '[/home.arpa/]10.0.80.249:53'
+  upstream_dns_file: ""
+  bootstrap_dns:
+    - 127.0.0.1:5335
+  fallback_dns: []
+  upstream_mode: load_balance
+  fastest_timeout: 1s
+  allowed_clients: []
+  disallowed_clients: []
+  blocked_hosts:
+    - version.bind
+    - id.server
+    - hostname.bind
+  trusted_proxies:
+    - 127.0.0.0/8
+    - ::1/128
+  cache_enabled: false
+  cache_size: 0
+  cache_ttl_min: 0
+  cache_ttl_max: 0
+  cache_optimistic: false
+  cache_optimistic_answer_ttl: 30s
+  cache_optimistic_max_age: 12h
+  bogus_nxdomain: []
+  aaaa_disabled: false
+  enable_dnssec: true
+  edns_client_subnet:
+    custom_ip: ""
+    enabled: false
+    use_custom: false
+  max_goroutines: 300
+  handle_ddr: true
+  ipset: []
+  ipset_file: ""
+  bootstrap_prefer_ipv6: false
+  upstream_timeout: 10s
+  private_networks: []
+  use_private_ptr_resolvers: true
+  local_ptr_upstreams:
+    - 10.0.80.249:53
+  use_dns64: false
+  dns64_prefixes: []
+  serve_http3: false
+  use_http3_upstreams: false
+  serve_plain_dns: true
+  hostsfile_enabled: true
+  pending_requests:
+    enabled: true
+tls:
+  enabled: true
+  server_name: ""
+  force_https: true
+  port_https: 443
+  port_dns_over_tls: 0
+  port_dns_over_quic: 0
+  port_dnscrypt: 0
+  dnscrypt_config_file: ""
+  certificate_chain: |-
+    -----BEGIN CERTIFICATE-----
+    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
+    mV4iJo2y3w==
+    -----END CERTIFICATE-----
+  private_key: ENC[AES256_GCM,data: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,iv:KQyPx+6RFZvLrTiLr3aaI9DQ2sxxChmwztEQiyUKe90=,tag:dyskaDL6ItrQBOzC29qH0w==,type:str]
+  certificate_path: ""
+  private_key_path: ""
+  strict_sni_check: false
+querylog:
+  dir_path: ""
+  ignored: []
+  interval: 90d
+  size_memory: 1000
+  enabled: true
+  ignored_enabled: false
+  file_enabled: true
+statistics:
+  dir_path: ""
+  ignored: []
+  interval: 1d
+  enabled: true
+  ignored_enabled: false
+filters:
+  - enabled: true
+    url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt
+    name: AdGuard DNS filter
+    id: 1
+  - enabled: false
+    url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_2.txt
+    name: AdAway Default Blocklist
+    id: 2
+  - enabled: true
+    url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_48.txt
+    name: HaGeZi's Pro Blocklist
+    id: 1736805147
+whitelist_filters: []
+user_rules:
+  - '||api.audiorelay.net^$client=~audioproxy,dnsrewrite=10.0.10.245'
+dhcp:
+  enabled: false
+  interface_name: ""
+  local_domain_name: lan
+  dhcpv4:
+    gateway_ip: ""
+    subnet_mask: ""
+    range_start: ""
+    range_end: ""
+    lease_duration: 86400
+    icmp_timeout_msec: 1000
+    options: []
+  dhcpv6:
+    range_start: ""
+    lease_duration: 86400
+    ra_slaac_only: false
+    ra_allow_slaac: false
+filtering:
+  blocking_ipv4: ""
+  blocking_ipv6: ""
+  blocked_services:
+    schedule:
+      time_zone: Local
+    ids: []
+  protection_disabled_until: null
+  safe_search:
+    enabled: false
+    bing: true
+    duckduckgo: true
+    ecosia: true
+    google: true
+    pixabay: true
+    yandex: true
+    youtube: true
+  blocking_mode: default
+  parental_block_host: family-block.dns.adguard.com
+  safebrowsing_block_host: standard-block.dns.adguard.com
+  rewrites: []
+  safe_fs_patterns:
+    - /opt/AdGuardHome/userfilters/*
+  max_http_size: 256MB
+  safebrowsing_cache_size: 1048576
+  safesearch_cache_size: 1048576
+  parental_cache_size: 1048576
+  cache_time: 30
+  filters_update_interval: 24
+  blocked_response_ttl: 10
+  filtering_enabled: true
+  rewrites_enabled: true
+  parental_enabled: false
+  safebrowsing_enabled: false
+  protection_enabled: true
+clients:
+  runtime_sources:
+    whois: true
+    arp: true
+    rdns: true
+    dhcp: true
+    hosts: true
+  persistent: []
+log:
+  enabled: true
+  file: ""
+  max_backups: 0
+  max_size: 100
+  max_age: 3
+  compress: false
+  local_time: false
+  verbose: false
+os:
+  group: ""
+  user: ""
+  rlimit_nofile: 0
+schema_version: 34
+sops:
+  age:
+    - enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBDajNUbmJkRXZmd2RmbkxF
+        WDZnWnBzZytJc0dlcXZualVPeGlMODcxZDFjClhudEp3OE95MDBVR1ZXSlpsbWxw
+        QzZKaTc0SWdBWDZqdVhzYkZkVE9jNUEKLS0tIElESzJsR09Yc0UwYTNWYWZiQkNM
+        ZE9JaFpicUF5UkhuUkxRS0NoVU4yU0EKI5dTyxrNwjCzb8ihRQLtLlk0qdubaDD8
+        f+jUlbcFPd+nIJZ0Otcq+zk8H6Mqk48Mr9EZKZoc6Fw8u4bS29VpoA==
+        -----END AGE ENCRYPTED FILE-----
+      recipient: age108vz72xskmspg0zhzxvzuwc5ee8stkhhn8jvr260q29tfqnalp2s4cgzc5
+    - enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBLNHJsUEw4T2Z2WGh6ZzVs
+        T0JFSkNMNkgvcWVhcHpIV0ZCdGFPb3FFLzJNCjJsdlBuQ0t2ODhtbjU4UUJKSms0
+        a2RRMFJZSU5uT1dPeWg3NTR3eU5qVmsKLS0tIFQ0dEh2VXAzQjNXMklKek10dGRB
+        dkZ2Vkt1N2NnOXIyMGVSTHVPUDNid3cKMwz86EOanWce6e1JrQZWmYFNb5DXJruL
+        riAMlxrPJiHTREzwmt7X7pTXF8s6tjTouihSkxnG6oFKXV8X7PMyKA==
+        -----END AGE ENCRYPTED FILE-----
+      recipient: age10fgpd43m8rmucu3ltjf6g7p0rulw2anwt46lhuwkgz60gzr84cuqr67vqa
+  encrypted_regex: private_key|password
+  lastmodified: "2026-09-26T23:23:46Z"
+  mac: ENC[AES256_GCM,data:ggnTC1cXyRIWYPSzLmzhdxBLvVdsRJVGKf/2xX97CNdKGnEJd143phUgLlkYW0wGEzRqu/ZcSKd12z3wgiPn0tOt9J0ZNz47UZZnxzYVxeUUUQsUFtqjGNJIy1ERqF6x7QdpptKGd/vhJXyzk9vSaP16/oTq3TY+csidczgON3k=,iv:WB3PPXXa9/gNtPSGlAk5yPTL6Dgme3oIq6FLCMH0ms0=,tag:Qz/1Izo8U8w8OXAdrQyHxA==,type:str]
+  version: 3.13.3

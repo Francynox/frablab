@@ -1,7 +1,7 @@
 { inputs, ... }:
 {
   flake.nixosModules.lxc =
-    { config, lib, ... }:
+    { lib, ... }:
     {
       imports = [
         "${inputs.nixpkgs}/nixos/modules/virtualisation/proxmox-lxc.nix"
@@ -12,6 +12,6 @@
       systemd.services.console-getty.enable = false;
 
       services.francynox.auto-update.mode = lib.mkDefault "push";
-      services.francynox.lxc-wipe-on-boot.enable = config.frablab.homelab.persistence.enable or false;
+      services.francynox.lxc-wipe-on-boot.enable = true;
     };
 }
