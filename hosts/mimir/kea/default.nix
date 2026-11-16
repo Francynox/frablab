@@ -11,11 +11,7 @@ let
     network = config.frablab.network;
   };
 
-  dhcp4StaticConfig = (pkgs.formats.json { }).generate "kea-dhcp4.json" (
-    keaLib.mkDhcp4Config {
-      dnsServers = config.frablab.homelab.network.dns;
-    }
-  );
+  dhcp4StaticConfig = (pkgs.formats.json { }).generate "kea-dhcp4.json" (keaLib.mkDhcp4Config { });
 
   dhcpDdnsConfigJson = (pkgs.formats.json { }).generate "kea-dhcp-ddns.json" (
     keaLib.mkDhcpDdnsConfig {
@@ -66,7 +62,7 @@ in
   };
 
   frablab.homelab.persistence.directories = [
-    "${cfg.dataDir}"
+    cfg.dataDir
   ];
 
   networking.firewall.allowedUDPPorts = [ 67 ];

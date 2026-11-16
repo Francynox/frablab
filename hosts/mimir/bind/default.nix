@@ -32,7 +32,7 @@ let
     namedConf = pkgs.writeText "named.conf" (
       bindLib.namedConf {
         inherit (cfg) dataDir;
-        dhcpKeyFile = "${dhcpKeyFile}";
+        inherit dhcpKeyFile;
       }
     );
     nsupdateScript = pkgs.writeText "nsupdate-static-reverse.txt" bindLib.nsupdateScriptContent;
@@ -116,7 +116,7 @@ in
   };
 
   frablab.homelab.persistence.directories = [
-    "${cfg.dataDir}"
+    cfg.dataDir
   ];
 
   services.resolved.settings.Resolve.DNSStubListener = "no";

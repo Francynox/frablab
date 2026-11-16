@@ -47,7 +47,7 @@ in
 
   services.francynox.sparkyfitness = {
     enable = true;
-    frontendUrl = "https://${config.networking.hostName}.${config.frablab.homelab.network.subnet}.${config.frablab.network.domain}";
+    frontendUrl = "https://${config.frablab.network.hosts.service.sparkyfitness.fqdn}";
     environmentFile = config.sops.templates."sparkyfitness.env".path;
   };
 

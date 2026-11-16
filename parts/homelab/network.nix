@@ -20,8 +20,8 @@
           "ens18";
 
       # Look up this host's assigned IP and gateway from the cluster topology
-      subnetData = clusterNet.hosts.${cfg.subnet} or null;
-      hostData = subnetData.${config.networking.hostName} or null;
+      subnet = clusterNet.subnets.${cfg.subnet} or null;
+      hostData = clusterNet.hosts.${cfg.subnet}.${config.networking.hostName} or null;
     in
     {
       imports = [
@@ -43,10 +43,8 @@
 
         dns = lib.mkOption {
           type = lib.types.listOf lib.types.str;
-          default = lib.optional (
-            clusterNet.hosts.service.bifrost.ip or null != null
-          ) clusterNet.hosts.service.bifrost.ip;
-          description = "DNS servers to configure. Defaults to Bifrost (AdGuard Home).";
+          default = if subnet != null then subnet.dns.servers else clusterNet.dns.servers;
+          description = "DNS servers to configure. Defaults to the subnet or global cluster DNS.";
         };
       };
 
@@ -63,11 +61,42 @@
         }
 
         (lib.mkIf (cfg.subnet != null) {
+          assertions = [
+            {
+              assertion = subnet != null;
+              message = "frablab.homelab.network: unknown subnet '${cfg.subnet}' for host '${config.networking.hostName}'. Valid subnets: ${lib.concatStringsSep ", " (lib.attrNames clusterNet.subnets)}";
+            }
+            {
+              assertion = hostData != null;
+              message = "frablab.homelab.network: host '${config.networking.hostName}' not found in subnet '${cfg.subnet}'. Available hosts: ${
+                lib.concatStringsSep ", " (lib.attrNames (clusterNet.hosts.${cfg.subnet} or { }))
+              }";
+            }
+          ];
+
           systemd.network.networks."10-default" = {
             matchConfig.Name = interfaceName;
             networkConfig = {
-              Address = hostData.address;
-              Gateway = subnetData.gateway.ip;
+              Address =
+                if hostData != null && hostData.address6 != null then
+                  [
+                    hostData.address
+                    hostData.address6
+                  ]
+                else if hostData != null then
+                  hostData.address
+                else
+                  [ ];
+              Gateway =
+                if subnet != null && subnet.gateway.ipv6 != null then
+                  [
+                    subnet.gateway.ipv4
+                    subnet.gateway.ipv6
+                  ]
+                else if subnet != null then
+                  subnet.gateway.ipv4
+                else
+                  [ ];
               DNS = cfg.dns;
             };
           };

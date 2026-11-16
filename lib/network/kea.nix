@@ -1,43 +1,86 @@
 { network }:
 let
-  reversePrefix = import ./reverse-prefix.nix;
-
   inherit (network)
     subnets
-    hosts
     dhcpDomain
     ;
 
+  isDhcpSubnet =
+    subnet:
+    subnet.dhcp != null || (builtins.any (hdata: hdata.mac != null) (builtins.attrValues subnet.hosts));
+
+  activeDhcpSubnetNames = builtins.filter (sname: isDhcpSubnet subnets.${sname}) (
+    builtins.attrNames subnets
+  );
+
   mkSubnet4 =
     name: subnet:
+    let
+      v4Dns = subnet.dns.ipv4;
+      hasDnsOverride = v4Dns != network.dns.ipv4;
+      reservations = builtins.concatMap (
+        hdata:
+        if hdata.mac != null then
+          [
+            {
+              hw-address = hdata.mac;
+              ip-address = hdata.ipv4;
+              hostname = hdata.name;
+            }
+          ]
+        else
+          [ ]
+      ) (builtins.attrValues subnet.hosts);
+    in
     {
       inherit (subnet) id;
-      subnet = "${subnet.prefix}.0/${toString subnet.mask}";
-      pools = [
-        {
-          pool = "${subnet.prefix}.${toString subnet.dhcpRange.start} - ${subnet.prefix}.${toString subnet.dhcpRange.end}";
-        }
-      ];
+      subnet = subnet.cidr;
+      pools =
+        if subnet.dhcp != null then
+          [
+            {
+              pool = "${subnet.dhcp.start} - ${subnet.dhcp.end}";
+            }
+          ]
+        else
+          [ ];
       option-data = [
         {
           name = "routers";
-          data = hosts.${name}.gateway.ip;
+          data = subnet.gateway.ipv4;
         }
         {
           name = "domain-name";
           data = "${name}.${dhcpDomain}";
         }
-      ];
+      ]
+      ++ (
+        if hasDnsOverride && v4Dns != [ ] then
+          [
+            {
+              name = "domain-name-servers";
+              data = builtins.concatStringsSep "," v4Dns;
+            }
+          ]
+        else
+          [ ]
+      );
       ddns-qualifying-suffix = "${name}.${dhcpDomain}";
     }
-    // (if subnet.validLifetime != null then { valid-lifetime = subnet.validLifetime; } else { });
+    // (if reservations != [ ] then { inherit reservations; } else { })
+    // (
+      if subnet.dhcp != null && subnet.dhcp.validLifetime != null then
+        { valid-lifetime = subnet.dhcp.validLifetime; }
+      else
+        { }
+    );
 
   mkDhcp4Config =
     {
       interfaces ? [ "*" ],
       leaseFile ? "/var/lib/kea/dhcp4.leases",
       socketPath ? "/run/kea/kea-dhcp4.socket",
-      dnsServers ? [ ],
+      dnsServers ? (network.dns.ipv4 or [ ]),
     }:
     {
       Dhcp4 = {
@@ -67,14 +110,18 @@ let
 
         valid-lifetime = 86400;
 
-        option-data = [
-          {
-            name = "domain-name-servers";
-            data = builtins.concatStringsSep "," dnsServers;
-          }
-        ];
+        option-data =
+          if dnsServers != [ ] then
+            [
+              {
+                name = "domain-name-servers";
+                data = builtins.concatStringsSep "," dnsServers;
+              }
+            ]
+          else
+            [ ];
 
-        subnet4 = builtins.attrValues (builtins.mapAttrs mkSubnet4 subnets);
+        subnet4 = map (sname: mkSubnet4 sname subnets.${sname}) activeDhcpSubnetNames;
 
         dhcp-ddns = {
           enable-updates = true;
@@ -106,9 +153,13 @@ let
         ];
       };
 
-      reverseZones = builtins.attrValues (
-        builtins.mapAttrs (_name: subnet: {
-          name = "${reversePrefix subnet.prefix}.in-addr.arpa.";
+      reverseZones = map (
+        sname:
+        let
+          subnet = subnets.${sname};
+        in
+        {
+          name = "${subnet.reverseZone}.";
           key-name = "dhcp-key";
           dns-servers = [
             {
@@ -116,8 +167,8 @@ let
               port = dnsServerPort;
             }
           ];
-        }) subnets
-      );
+        }
+      ) activeDhcpSubnetNames;
     in
     {
       DhcpDdns = {

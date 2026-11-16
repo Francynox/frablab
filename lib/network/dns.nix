@@ -12,8 +12,6 @@ let
     subnets
     ;
 
-  reversePrefix = import ./reverse-prefix.nix;
-
   mkZone = origin: zoneContent: dns.lib.toString origin (zoneContent // { useOrigin = true; });
 
   mkSOA =
@@ -34,19 +32,66 @@ let
       NS = [ ns ];
     };
 
+  recursiveMerge =
+    lhs: rhs:
+    lhs
+    // (builtins.mapAttrs (
+      key: rval:
+      if builtins.isAttrs rval && builtins.isAttrs (lhs.${key} or null) then
+        recursiveMerge lhs.${key} rval
+      else
+        rval
+    ) rhs);
+
   mkForwardZone =
     {
       serial ? 1,
     }:
     let
       base = mkSOA { inherit serial; };
+      v4Dns = network.dns.ipv4 or [ ];
+      v6Dns = network.dns.ipv6 or [ ];
+      dnsRecord =
+        let
+          records =
+            (if v4Dns != [ ] then { A = v4Dns; } else { }) // (if v6Dns != [ ] then { AAAA = v6Dns; } else { });
+        in
+        if records != { } then { dns = records; } else { };
       hostRecords = builtins.mapAttrs (_sname: shosts: {
-        subdomains = builtins.mapAttrs (_hname: hdata: {
-          A = [ hdata.ip ];
-        }) shosts;
+        subdomains = builtins.mapAttrs (
+          _hname: hdata:
+          {
+            A = [ hdata.ipv4 ];
+          }
+          // (if hdata.ipv6 != null then { AAAA = [ hdata.ipv6 ]; } else { })
+        ) shosts;
       }) network.hosts;
+
+      allHosts = builtins.concatMap builtins.attrValues (builtins.attrValues network.hosts);
+
+      aliasRecords = builtins.listToAttrs (
+        builtins.concatMap (
+          hdata:
+          map (alias: {
+            name = alias;
+            value = {
+              CNAME = [ "${hdata.fqdn}." ];
+            };
+          }) hdata.aliases
+        ) allHosts
+      );
+
+      extraSubdomains = network.extraRecords.subdomains or { };
+      extraApex = builtins.removeAttrs network.extraRecords [ "subdomains" ];
+
+      mergedSubdomains = builtins.foldl' recursiveMerge { } [
+        dnsRecord
+        hostRecords
+        aliasRecords
+        extraSubdomains
+      ];
     in
-    mkZone domain (base // { subdomains = hostRecords; });
+    mkZone domain (base // extraApex // { subdomains = mergedSubdomains; });
 
   mkDynamicForwardZone = mkZone dhcpDomain (mkSOA { });
 
@@ -54,19 +99,11 @@ let
     {
       sname,
     }:
-    let
-      revPrefix = reversePrefix subnets.${sname}.prefix;
-      origin = "${revPrefix}.in-addr.arpa";
-    in
-    mkZone origin (mkSOA { });
+    mkZone subnets.${sname}.reverseZone (mkSOA { });
 
-  mkStaticZones =
-    {
-      serial ? 1,
-    }:
-    {
-      "db.${domain}" = mkForwardZone { inherit serial; };
-    };
+  staticZoneFiles = {
+    "db.${domain}" = mkForwardZone { inherit serial; };
+  };
 
   mkDynamicZones =
     let
@@ -75,7 +112,7 @@ let
       };
       dyndRev = builtins.listToAttrs (
         map (sname: {
-          name = "db.${subnets.${sname}.prefix}";
+          name = "db.${sname}";
           value = mkDynamicReverseZone { inherit sname; };
         }) (builtins.attrNames subnets)
       );
@@ -84,8 +121,8 @@ let
 in
 {
   lib = {
-    inherit mkZone mkSOA reversePrefix;
+    inherit mkZone mkSOA;
   };
-  staticZoneFiles = mkStaticZones { inherit serial; };
+  inherit staticZoneFiles;
   dynamicZoneFiles = mkDynamicZones;
 }

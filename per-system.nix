@@ -78,6 +78,38 @@ in
               mkdir $out
             '';
 
+        network =
+          let
+            networkConfig =
+              (lib.evalModules {
+                modules = [
+                  (inputs.self + /lib/network/network-schema.nix)
+                  { frablab.network = import (inputs.self + /constants/network.nix); }
+                ];
+              }).config.frablab.network;
+            networkJson = pkgs.writeText "network.json" (builtins.toJSON networkConfig);
+          in
+          pkgs.runCommand "check-network"
+            {
+              nativeBuildInputs = [ pkgs.python3 ];
+              src = inputs.self + /scripts;
+            }
+            ''
+              python3 $src/check_network/check_network.py ${networkJson}
+              mkdir $out
+            '';
+
+        network-tests =
+          pkgs.runCommand "check-network-tests"
+            {
+              nativeBuildInputs = [ pkgs.python3 ];
+              src = inputs.self + /scripts;
+            }
+            ''
+              python3 $src/check_network/test_check_network.py
+              mkdir $out
+            '';
+
         # Unit tests for the pure network lib and schema validation.
         unit-lib =
           let
@@ -106,13 +138,13 @@ in
           config.treefmt.build.wrapper
           pkgs.just
           pkgs.sops
+          pkgs.python3
           pkgs.ssh-to-age
           pkgs.git
           pkgs.age
           pkgs.nix
           pkgs.nvd
           pkgs.nix-output-monitor
-          pkgs.python3
           inputs.disko.packages.${system}.disko
           pkgs.deadnix
           pkgs.statix
