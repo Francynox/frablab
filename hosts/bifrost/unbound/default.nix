@@ -13,7 +13,7 @@ in
         ];
       };
 
-      mutable-configs."${unboundConfigEtcPath}" = {
+      mutable-configs.${unboundConfigEtcPath} = {
         source = unboundConfig;
       };
     };

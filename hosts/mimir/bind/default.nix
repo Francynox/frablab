@@ -76,7 +76,7 @@ in
       };
 
       mutable-configs = {
-        "${bindConfigEtcPath}" = {
+        ${bindConfigEtcPath} = {
           source = bind.namedConf;
         };
       }

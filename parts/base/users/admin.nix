@@ -53,7 +53,6 @@
           description = "admin";
           group = lib.mkForce "admin";
           extraGroups = [
-            "networkmanager"
             "wheel"
           ]
           ++ cfg.extraGroups;

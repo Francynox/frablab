@@ -1,6 +1,8 @@
 {
   flake.nixosModules.base-core =
     {
+      config,
+      lib,
       inputs,
       constants,
       self,
@@ -11,7 +13,7 @@
         inputs.sops-nix.nixosModules.sops
       ];
 
-      services = {
+      services = lib.mkIf (!config.boot.isContainer) {
         power-profiles-daemon = {
           enable = true;
         };

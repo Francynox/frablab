@@ -24,11 +24,10 @@ in
       };
 
       mutable-configs = {
-        "${adguardHomeConfigEtcPath}" = {
+        ${adguardHomeConfigEtcPath} = {
           source = config.sops.secrets.adguardhome-config.path;
           mode = "0600";
-          inherit (cfg) user;
-          inherit (cfg) group;
+          inherit (cfg) user group;
           pathToCheck = "${cfg.dataDir}/AdGuardHome.yaml";
           format = "yaml";
         };
@@ -37,7 +36,7 @@ in
   };
 
   frablab.homelab.persistence.directories = [
-    "${cfg.dataDir}"
+    cfg.dataDir
   ];
 
   services.resolved.settings.Resolve.DNSStubListener = "no";

@@ -7,7 +7,6 @@
         "${inputs.nixpkgs}/nixos/modules/virtualisation/proxmox-lxc.nix"
       ];
 
-      proxmoxLXC.manageHostName = true;
       proxmoxLXC.manageNetwork = true;
       systemd.services.console-getty.enable = false;
 

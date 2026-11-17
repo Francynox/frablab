@@ -35,7 +35,6 @@ format:
 # Build Artifacts
 #-------------------------------------------------------------------------------
 
-# Build NixOS ISO image
 # Build Proxmox VMA image
 build-proxmox:
     nix build .#proxmox-image -o nixos-proxmox.vma.zst

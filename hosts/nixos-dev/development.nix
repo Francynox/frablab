@@ -3,7 +3,6 @@
   environment.systemPackages = with pkgs; [
     act
     ssh-to-age
-    sops
     git-filter-repo
     treefmt
     uv
@@ -16,8 +15,10 @@
 
   programs.bash.interactiveShellInit = ''
     auth-sops() {
-      if [ -f ${constants.sopsKeyPath} ]; then
-        export SOPS_AGE_KEY=$(sudo ${pkgs.ssh-to-age}/bin/ssh-to-age -private-key -i ${constants.sopsKeyPath})
+      if [ -f "${constants.sopsKeyPath}" ]; then
+        local key
+        key=$(sudo ${pkgs.ssh-to-age}/bin/ssh-to-age -private-key -i "${constants.sopsKeyPath}") || return 1
+        export SOPS_AGE_KEY="$key"
       else
         echo "Error: Host key not found."
       fi

@@ -3,47 +3,70 @@
     { config, lib, ... }:
     let
       cfg = config.frablab.homelab.persistence;
-      adminCfg = config.frablab.base.users.admin;
-    in
-    {
-      options = {
-        frablab.homelab.persistence = {
-          path = lib.mkOption {
-            type = lib.types.str;
-            default = "/nix/persist";
-            description = "Root directory for persistent storage";
-          };
 
+      persistenceEntryType = lib.types.listOf (
+        lib.types.either lib.types.str (lib.types.attrsOf lib.types.anything)
+      );
+
+      userPersistenceSubmodule = lib.types.submodule {
+        options = {
           directories = lib.mkOption {
-            type = lib.types.listOf lib.types.str;
+            type = persistenceEntryType;
             default = [ ];
-            description = "Directories to persist";
+            description = "Directories to persist for the user";
           };
 
           files = lib.mkOption {
-            type = lib.types.listOf lib.types.str;
+            type = persistenceEntryType;
             default = [ ];
-            description = "Files to persist";
+            description = "Files to persist for the user";
           };
         };
+      };
+    in
+    {
+      options.frablab.homelab.persistence = {
+        path = lib.mkOption {
+          type = lib.types.str;
+          default = "/nix/persist";
+          description = "Root directory for persistent storage";
+        };
 
-        frablab.base.users.admin.persistence = {
-          directories = lib.mkOption {
-            type = lib.types.listOf lib.types.anything;
-            default = [ ];
-            description = "Directories to persist for admin";
-          };
+        directories = lib.mkOption {
+          type = persistenceEntryType;
+          default = [ ];
+          description = "Directories to persist";
+        };
 
-          files = lib.mkOption {
-            type = lib.types.listOf lib.types.anything;
-            default = [ ];
-            description = "Files to persist for admin";
-          };
+        files = lib.mkOption {
+          type = persistenceEntryType;
+          default = [ ];
+          description = "Files to persist";
+        };
+
+        users = lib.mkOption {
+          type = lib.types.attrsOf userPersistenceSubmodule;
+          default = { };
+          description = "Per-user directories and files to persist";
         };
       };
 
       config = {
-        environment.persistence."${cfg.path}" = {
+        frablab.homelab.persistence.users.admin = {
+          directories = [
+            {
+              directory = ".ssh";
+              mode = "0700";
+            }
+            ".config"
+            ".local/share"
+          ];
+          files = [
+            ".bash_history"
+          ];
+        };
+
+        environment.persistence.${cfg.path} = {
           hideMounts = true;
 
           directories = [
@@ -63,21 +86,7 @@
           ]
           ++ cfg.files;
 
-          users.admin = {
-            directories = [
-              {
-                directory = ".ssh";
-                mode = "0700";
-              }
-              ".config"
-              ".local/share"
-            ]
-            ++ adminCfg.persistence.directories;
-            files = [
-              ".bash_history"
-            ]
-            ++ adminCfg.persistence.files;
-          };
+          inherit (cfg) users;
         };
       };
     };

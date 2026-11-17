@@ -38,15 +38,17 @@ in
 
       treefmt = {
         projectRootFile = "flake.nix";
-        programs.yamlfmt.enable = true;
-        programs.jsonfmt.enable = true;
-        programs.just.enable = true;
-        programs.nixfmt.enable = true;
-        programs.deadnix.enable = true;
-        programs.statix.enable = true;
-        programs.ruff = {
-          check = true;
-          format = true;
+        programs = {
+          yamlfmt.enable = true;
+          jsonfmt.enable = true;
+          just.enable = true;
+          nixfmt.enable = true;
+          deadnix.enable = true;
+          statix.enable = true;
+          ruff = {
+            check = true;
+            format = true;
+          };
         };
       };
 

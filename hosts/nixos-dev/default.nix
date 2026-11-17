@@ -8,19 +8,13 @@
     ./development.nix
   ];
 
-  frablab.homelab.persistence = {
-    directories = [
-      "/var/lib/docker"
-    ];
-  };
-
-  frablab.base = {
-    users = {
-      admin = {
-        extraGroups = [ "docker" ];
-        exportDeploySshKey = true;
-        passwordlessSudo = true;
-        persistence = {
+  frablab = {
+    homelab = {
+      persistence = {
+        directories = [
+          "/var/lib/docker"
+        ];
+        users.admin = {
           directories = [
             "Projects"
             ".vscode-server"
@@ -33,6 +27,18 @@
           ];
         };
       };
+
+      network.subnet = "mgmt";
+    };
+
+    base = {
+      users = {
+        admin = {
+          extraGroups = [ "docker" ];
+          exportDeploySshKey = true;
+          passwordlessSudo = true;
+        };
+      };
     };
   };
 
@@ -40,6 +46,4 @@
     push-server.enable = true;
     dates = "*-*-* 02:00:00";
   };
-
-  frablab.homelab.network.subnet = "mgmt";
 }

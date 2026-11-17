@@ -85,7 +85,7 @@ in
 
         # Change virtio0 to scsi0
         cp ${
-          cfgFile "qemu-server.conf" (cfg.qemuConf // cfg.qemuExtraConf)
+          cfgFile "qemu-server.conf" ((builtins.removeAttrs cfg.qemuConf [ "diskSize" ]) // cfg.qemuExtraConf)
         }/qemu-server.conf ./qemu-server.conf
         sed -i 's/virtio0/scsi0/g' ./qemu-server.conf
 

@@ -50,11 +50,11 @@ in
     };
 
     mutable-configs = {
-      "${dhcp4ConfigEtcPath}" = {
+      ${dhcp4ConfigEtcPath} = {
         source = dhcp4StaticConfig;
         format = "json";
       };
-      "${dhcpDdnsConfigEtcPath}" = {
+      ${dhcpDdnsConfigEtcPath} = {
         source = dhcpDdnsConfigJson;
         format = "json";
       };

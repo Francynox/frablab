@@ -8,6 +8,6 @@
 
   nix.settings.accept-flake-config = true;
   programs.bash.shellAliases = {
-    install = "nix run ${constants.flakeUrl}#install -- --experimental-features 'nix-command flakes'";
+    install = "nix --extra-experimental-features 'nix-command flakes' run ${constants.flakeUrl}#install";
   };
 }

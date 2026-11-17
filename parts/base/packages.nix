@@ -11,13 +11,13 @@
         zip
         xz
         zstd
-        unzipNLS
+        unzip
         p7zip
 
         # networking tools
         mtr # A network diagnostic tool
         iperf3
-        dnsutils # `dig` + `nslookup`
+        bind.dnsutils # `dig` + `nslookup`
         ldns # replacement of `dig`, it provide the command `drill`
         wget
         curl
