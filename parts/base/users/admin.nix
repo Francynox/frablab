@@ -72,6 +72,12 @@
             ];
           }
         ];
+
+        programs.ssh.extraConfig = lib.mkIf cfg.exportDeploySshKey ''
+          Match localuser admin user ${config.services.francynox.deploy-user.name}
+            IdentityFile /home/admin/.ssh/deploy-ssh-key
+            IdentitiesOnly yes
+        '';
       };
     };
 }
